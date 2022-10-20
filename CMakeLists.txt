@@ -20,7 +20,14 @@ endif ()
 message("Compiler: ${CMAKE_CXX_COMPILER}")
 message("Flags: ${CMAKE_CXX_FLAGS}")
 
-add_library(ShoppingLikeFiles_NativeComponent SHARED src/library.cpp src/calculator.cc src/calculator.h)
+add_library(ShoppingLikeFiles_NativeComponent SHARED
+        include/CAFF_Processor.h
+        include/CIFF_Processor.h
+        include/DLLPublicInterface.h
+        src/DLLPublicInterface.cc
+        src/CAFF_Processor.cc src/Util.cc)
+
+target_include_directories(ShoppingLikeFiles_NativeComponent PRIVATE include)
 
 enable_testing()
 add_subdirectory(test)
