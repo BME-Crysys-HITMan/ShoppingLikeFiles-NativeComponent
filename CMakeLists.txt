@@ -8,7 +8,7 @@ option(ci-run "Running tests in CI environment." OFF)
 
 if (ci-run)
     if (DEFINED ENV{LLVM_PATH})
-        set(clangRoute "$ENV{LLVM_PATH}/clang++" CACHE INTERNAL "Copied from environment variable")
+        set(clangRoute "$ENV{LLVM_PATH}/bin/clang++" CACHE INTERNAL "Copied from environment variable")
         message("Clang path = ${clangRoute}")
         set(CMAKE_CXX_COMPILER "${clangRoute}")
     else ()
