@@ -57,7 +57,7 @@ jobs:
         run: |
           mkdir build
           cmake -S . -B build -Dci-run=ON
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
+          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release -Dci-run=ON
       - name: Run tests
         run: |
           ./build/test/hello_test
