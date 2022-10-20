@@ -57,7 +57,7 @@ jobs:
         run: |
           mkdir build
           CC=clang CXX=clang++ cmake -S . -B build -Dci-run=ON
-          CC=clang CXX=clang++ build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release -D ci-run=ON
+          CC=clang CXX=clang++ build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} cmake --build build/ --config Release
       - name: Run tests
         run: |
           ./build/test/hello_test
