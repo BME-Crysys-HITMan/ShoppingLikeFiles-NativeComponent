@@ -8,7 +8,7 @@ option(ci-run "Running tests in CI environment." OFF)
 
 if (ci-run)
     if (DEFINED ENV{LLVM_PATH})
-        set(CMAKE_CXX_COMPILER "${$ENV{LLVM_PATH}}clang++")
+        set(CMAKE_CXX_COMPILER "${$ENV{LLVM_PATH}}/clang++")
     else ()
         set(CMAKE_CXX_COMPILER clang++)
     endif ()

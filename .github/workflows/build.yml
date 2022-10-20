@@ -25,6 +25,11 @@ jobs:
         uses: KyleMayes/install-llvm-action@v1
         with:
           version: "13.0"
+      - name: Add clang to path
+        run: |
+          ls
+          export PATH="./llvm:$PATH"
+          echo $PATH
       - name: Cache SonarCloud packages
         uses: actions/cache@v1
         with:
@@ -47,6 +52,8 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
       - name: Run build-wrapper
+        env:
+          LLVM_PATH: ${{ env.LLVM_PATH }}
         run: |
           mkdir build
           cmake -S . -B build -Dci-run=ON
