@@ -6,11 +6,14 @@ set(CMAKE_CXX_STANDARD 20)
 
 option(ci-run "Running tests in CI environment." OFF)
 
-if(ci-run)
-    set(CMAKE_CXX_COMPILER "clang++")
-
+if (ci-run)
+    if (DEFINED ENV{LLVM_PATH})
+        set(CMAKE_CXX_COMPILER "${$ENV{LLVM_PATH}}clang++")
+    else ()
+        set(CMAKE_CXX_COMPILER clang++)
+    endif ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping -O0 -g")
-endif()
+endif ()
 
 add_library(ShoppingLikeFiles_NativeComponent SHARED src/library.cpp src/calculator.cc src/calculator.h)
 
