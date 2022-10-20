@@ -1,0 +1,10 @@
+name: IncrementRelease
+on:
+  release:
+    types: [published]
+jobs:
+  job1:
+    name: Increment release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/chechout@v2
