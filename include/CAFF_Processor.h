@@ -48,7 +48,7 @@ namespace CAFF {
         uint8_t numAnim;
     };
 
-    class __declspec(dllexport) CAFFProcessor {
+    class CAFFProcessor {
     private:
         char *fileName;
         bool isLittleEndian;

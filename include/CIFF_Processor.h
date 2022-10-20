@@ -63,7 +63,7 @@ namespace CIFF {
         uint8_t blue;
     };
 
-    class __declspec(dllexport) CIFFProcessor {
+    class CIFFProcessor {
     private:
         //Must be 'CIFF'
         char headerMagic[4];
