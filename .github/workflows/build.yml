@@ -48,7 +48,7 @@ jobs:
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
       - name: Add version
         run: |
-          echo "\nsonar.projectVersion=latest" >> sonar-project.properties
+          echo "\n\nsonar.projectVersion=1.0.0" >> sonar-project.properties
       - name: Run build-wrapper
         env:
           LLVM_PATH: ${{ env.LLVM_PATH }}
