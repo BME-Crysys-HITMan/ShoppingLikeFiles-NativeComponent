@@ -14,8 +14,11 @@ if (ci-run)
     else ()
         set(CMAKE_CXX_COMPILER clang++)
     endif ()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping -O0 -g")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping -mllvm -runtime-counter-relocation -O0 -g")
 endif ()
+
+message("Compiler: ${CMAKE_CXX_COMPILER}")
+message("Flags: ${CMAKE_CXX_FLAGS}")
 
 add_library(ShoppingLikeFiles_NativeComponent SHARED src/library.cpp src/calculator.cc src/calculator.h)
 
