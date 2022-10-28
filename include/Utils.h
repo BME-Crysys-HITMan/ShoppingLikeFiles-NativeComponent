@@ -28,11 +28,34 @@
 
 #ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
 #define SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
-namespace NativeComponent {
-    namespace Utils {
-        bool isLittleEndian();
-    }
+
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long uint64_t;
+typedef uint64_t size_t;
+
+
+namespace NativeComponent::Utils {
+    bool isLittleEndian();
 }
 
+namespace CAFF::Utils {
+    enum CAFF_Block_Type {
+        Header,
+        Credits,
+        Animation
+    };
+
+    /**
+     *
+     * @param id section of a block
+     * @return Returns a block type.
+     *
+     * @exception
+     * Throws std::exception() if id type is unknown
+     */
+    CAFF_Block_Type getBlockType(uint8_t id);
+}
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H

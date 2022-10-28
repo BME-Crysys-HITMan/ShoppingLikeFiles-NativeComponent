@@ -56,7 +56,6 @@ int main(int argc, char **argv) {
 
     if (argc < 2) {
         std::cout << "Usage: application /path/to/file" << std::endl;
-        abort();
         exit(-1);
     }
 

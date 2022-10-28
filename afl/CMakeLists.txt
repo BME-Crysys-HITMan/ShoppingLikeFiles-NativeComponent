@@ -13,6 +13,6 @@ add_executable(
         TestHarness.cpp
         ../src/CAFF_Processor.cc
         ../src/Util.cc
-)
+        ../src/CIFF_validation.cc ../src/CAFF_validation.cc)
 
 target_include_directories(afl_test PRIVATE ../include)

@@ -1,4 +1,9 @@
 
+//
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
+//
+
+
 // MIT License
 //
 // Copyright (c) 2022.  - BME-Crysys-HITMan
@@ -21,35 +26,24 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H
+#define SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H
 
-//
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
-//
-#include "Utils.h"
-#include <bit>
-#include <string>
+/**
+ * Validates a CIFF header based on raw data.
+ *
+ *
+ * @param data Raw dataframe
+ * @return Returns true if content is valid, otherwise returns false.
+ */
+bool validateHeader(uint8_t *data);
 
-bool NativeComponent::Utils::isLittleEndian() {
-    if constexpr (std::endian::native == std::endian::little) {
-        return true;
-    } else {
-        return false;
-    }
-}
+/**
+ *
+ * @param data
+ * @param content_size
+ * @return
+ */
+bool validateContent(uint8_t *data, size_t content_size);
 
-CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
-    switch (id) {
-        case 0x01: {
-            return CAFF::Utils::CAFF_Block_Type::Header;
-        }
-        case 0x02: {
-            return CAFF::Utils::CAFF_Block_Type::Credits;
-        }
-        case 0x03: {
-            return CAFF::Utils::CAFF_Block_Type::Animation;
-        }
-        default: {
-            throw std::exception();
-        }
-    }
-}
+#endif //SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H

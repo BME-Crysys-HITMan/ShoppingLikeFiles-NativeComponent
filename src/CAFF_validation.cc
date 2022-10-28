@@ -23,33 +23,18 @@
 
 
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
 //
-#include "Utils.h"
-#include <bit>
-#include <string>
+#include "CAFF_validation.h"
 
-bool NativeComponent::Utils::isLittleEndian() {
-    if constexpr (std::endian::native == std::endian::little) {
-        return true;
-    } else {
-        return false;
-    }
+bool ValidateHeader(uint8_t *data, size_t length) {
+    return false;
 }
 
-CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
-    switch (id) {
-        case 0x01: {
-            return CAFF::Utils::CAFF_Block_Type::Header;
-        }
-        case 0x02: {
-            return CAFF::Utils::CAFF_Block_Type::Credits;
-        }
-        case 0x03: {
-            return CAFF::Utils::CAFF_Block_Type::Animation;
-        }
-        default: {
-            throw std::exception();
-        }
-    }
+bool ValidateCredits(uint8_t *data, size_t length) {
+    return false;
+}
+
+bool ValidateAnimation(uint8_t *data, size_t length) {
+    return false;
 }

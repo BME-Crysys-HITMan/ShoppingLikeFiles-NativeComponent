@@ -1,4 +1,9 @@
 
+//
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
+//
+
+
 // MIT License
 //
 // Copyright (c) 2022.  - BME-Crysys-HITMan
@@ -21,35 +26,30 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
+#define SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
 
-//
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
-//
 #include "Utils.h"
-#include <bit>
-#include <string>
 
-bool NativeComponent::Utils::isLittleEndian() {
-    if constexpr (std::endian::native == std::endian::little) {
-        return true;
-    } else {
-        return false;
-    }
-}
+/**
+ * Validates a CAFF header block
+ * @param data field of containing block
+ * @return true, if header is valid
+ */
+bool ValidateHeader(uint8_t *data, size_t length);
 
-CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
-    switch (id) {
-        case 0x01: {
-            return CAFF::Utils::CAFF_Block_Type::Header;
-        }
-        case 0x02: {
-            return CAFF::Utils::CAFF_Block_Type::Credits;
-        }
-        case 0x03: {
-            return CAFF::Utils::CAFF_Block_Type::Animation;
-        }
-        default: {
-            throw std::exception();
-        }
-    }
-}
+/**
+ * Validates a CAFF Credits block
+ * @param data field of containing block
+ * @return true, it credits are valid
+ */
+bool ValidateCredits(uint8_t *data, size_t length);
+
+/**
+ * Validates a CAFF animation block
+ * @param data field of containing block
+ * @return true if duration and containing CIFF is valid
+ */
+bool ValidateAnimation(uint8_t *data, size_t length);
+
+#endif //SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
