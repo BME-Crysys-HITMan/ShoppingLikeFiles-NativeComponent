@@ -54,10 +54,11 @@ namespace CAFF {
         bool isLittleEndian;
         Header header;
         Credit metadata;
-    public:
+
         CAFFProcessor();
 
-        CAFFProcessor(const char &filename);
+    public:
+        explicit CAFFProcessor(const char *filename);
 
         ~CAFFProcessor();
 

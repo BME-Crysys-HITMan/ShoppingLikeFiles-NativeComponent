@@ -26,15 +26,56 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <cstring>
 #include <CAFF_Processor.h>
+#include <iostream>
+#include <random>
+#include <chrono>
 #include "Utils.h"
 
 namespace CAFF {
     CAFFProcessor::CAFFProcessor() {
         isLittleEndian = NativeComponent::Utils::isLittleEndian();
+        fileName = nullptr;
+        header = Header();
+        metadata = Credit();
     }
 
     CAFFProcessor::~CAFFProcessor() {
+        delete fileName;
+    }
+
+    CAFFProcessor::CAFFProcessor(const char *filename) : CAFFProcessor() {
+        fileName = new char[strlen(filename)];
+        memcpy(fileName, filename, strlen(filename));
+    }
+
+    bool CAFFProcessor::ValidateFile() {
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::mt19937 generator(seed);
+
+        auto n = generator() % 100;
+
+        if (n < 5) {
+            abort();
+        }
+        std::cout << n;
+        return true;
+    }
+
+    CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
+        auto *pixels = new CIFF::Pixel[15];
+
+        unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+        std::mt19937 generator(seed);
+
+        auto n = generator() % 100;
+
+        if (n < 5) {
+            abort();
+        }
+
+        return pixels;
     }
 }
 
