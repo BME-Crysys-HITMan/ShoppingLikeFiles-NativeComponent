@@ -29,12 +29,8 @@
 #ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
 #define SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
 
-typedef unsigned char uint8_t;
-typedef unsigned short uint16_t;
-typedef unsigned int uint32_t;
-typedef unsigned long long uint64_t;
-typedef uint64_t size_t;
-
+#include <cstdint>
+#include "Utils.h"
 
 namespace NativeComponent::Utils {
     bool isLittleEndian();

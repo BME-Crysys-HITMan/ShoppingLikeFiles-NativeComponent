@@ -29,27 +29,29 @@
 echo "AFL runner utility for HITman team afl testing by Daniel Abraham"
 echo
 
-#if [ "$#" -lt "2" ]; then
-#  echo "Usage: $0 /path/to/build_dir /path/to/src_dir [... target params...]"
-#  echo
-#  exit 1
-#fi
-#
-#SRC="$2"
-BLD="./build"
-#shift
-#shift
+if [ "$#" -lt "2" ]; then
+  echo "Usage: $0 /path/to/build_dir /path/to/src_dir [... target params...]"
+  echo
+  echo "Example run ./run_afl.sh /build/slf /code/afl"
+  echo
+  exit 1
+fi
 
-#if [ ! -d "$SRC" -o ! -f "$SRC/CMakeLists.txt"]
-#then
-#  echo "[-] Error: source not found or not contains CMakeList"
-#  exit 1
-#fi
+SRC="$2"
+BLD="$1"
+shift
+shift
 
-if [ -d ""]
+if [ ! -d "$SRC" -o ! -f "$SRC/CMakeLists.txt" ]
+then
+  echo "[-] Error: source not found or not contains CMakeList"
+  exit 1
+fi
+
+if [ -d "$BLD" ]
 then
   echo "Cleaning build dir"
-  rm -r "$BLD"
+  rm -r "$BLD"/*
 fi
 
 if [ ! -d "$BLD" ]
@@ -58,21 +60,16 @@ then
   mkdir "$BLD"
 fi
 
-#export AFL_USE_ASAN=1
-export AFL_USE_MSAN=1
+#export AFL_USE_ASAN=0
+#export AFL_USE_MSAN=0
 export AFL_USE_UBSAN=1
-
-echo "Cding to $BLD"
-cd "$BLD/"
-
-echo "Currently in ${PWD}"
 
 echo 'Running command cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ ..'
 
-cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ ..
+cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ -S $SRC -B $BLD
 
-make
+make --directory=$BLD
 
-afl-fuzz -i /test/inputs -o /test/output -D -- ./afl_test @@
+#afl-fuzz -i /test/inputs -o /test/output -D -- ./afl_test @@
 
-./afl_test /test/inputs/1.caff
+"$BLD"/afl_test /test/inputs/1.caff

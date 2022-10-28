@@ -38,7 +38,7 @@ bool validateHeader(uint8_t *data) {
     return false;
 }
 
-bool validateContent(uint8_t *data, size_t content_size) {
+bool validateContent(uint8_t *data, std::size_t content_size) {
     return false;
 }
 
@@ -48,7 +48,7 @@ bool validateContent(uint8_t *data, size_t content_size) {
  * @param magic 4 bytes of char
  * @return Returns true if magic is 'CIFF', otherwise return false
  */
-bool validateMagicString(unsigned char *magic) {
+bool validateMagicString(uint8_t *magic) {
     return true;
 }
 
@@ -80,7 +80,7 @@ bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) 
  * @param length length of the tags field
  * @return Returns true if requirements met for a well-formed tags field.
  */
-bool validateTags(char *tags, size_t length) {
+bool validateTags(char *tags, std::size_t length) {
 
 }
 
@@ -111,7 +111,7 @@ size_t getCaptionLength(uint8_t *caption) {
  * @param captionSize Length of caption field.
  * @return Size of tags field.
  */
-size_t getTagsLength(size_t headerSize, size_t captionSize) {
+size_t getTagsLength(size_t headerSize, std::size_t captionSize) {
     return 0;
 }
 
@@ -125,6 +125,6 @@ size_t getTagsLength(size_t headerSize, size_t captionSize) {
  * @param tagsLength
  * @return true, if header size is acceptable.
  */
-bool validateHeaderSize(size_t headerSize, size_t captionLength, size_t tagsLength) {
+bool validateHeaderSize(std::size_t headerSize, std::size_t captionLength, std::size_t tagsLength) {
     return false;
 }

@@ -29,6 +29,8 @@
 #ifndef SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H
 #define SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H
 
+#include "Utils.h"
+
 /**
  * Validates a CIFF header based on raw data.
  *
@@ -44,6 +46,6 @@ bool validateHeader(uint8_t *data);
  * @param content_size
  * @return
  */
-bool validateContent(uint8_t *data, size_t content_size);
+bool validateContent(uint8_t *data, std::size_t content_size);
 
 #endif //SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H

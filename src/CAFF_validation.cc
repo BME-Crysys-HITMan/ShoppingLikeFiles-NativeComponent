@@ -27,14 +27,14 @@
 //
 #include "CAFF_validation.h"
 
-bool ValidateHeader(uint8_t *data, size_t length) {
+bool ValidateHeader(uint8_t *data, std::size_t length) {
     return false;
 }
 
-bool ValidateCredits(uint8_t *data, size_t length) {
+bool ValidateCredits(uint8_t *data, std::size_t length) {
     return false;
 }
 
-bool ValidateAnimation(uint8_t *data, size_t length) {
+bool ValidateAnimation(uint8_t *data, std::size_t length) {
     return false;
 }
