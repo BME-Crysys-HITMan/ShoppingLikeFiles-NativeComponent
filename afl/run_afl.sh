@@ -60,7 +60,7 @@ then
   mkdir "$BLD"
 fi
 
-#export AFL_USE_ASAN=0
+export AFL_USE_ASAN=1
 #export AFL_USE_MSAN=0
 export AFL_USE_UBSAN=1
 

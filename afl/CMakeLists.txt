@@ -16,3 +16,5 @@ add_executable(
         ../src/CIFF_validation.cc ../src/CAFF_validation.cc)
 
 target_include_directories(afl_test PRIVATE ../include)
+
+target_link_libraries(afl_test)

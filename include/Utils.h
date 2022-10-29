@@ -30,7 +30,7 @@
 #define SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
 
 #include <cstdint>
-#include "Utils.h"
+#include <iostream>
 
 namespace NativeComponent::Utils {
     bool isLittleEndian();
@@ -52,6 +52,38 @@ namespace CAFF::Utils {
      * Throws std::exception() if id type is unknown
      */
     CAFF_Block_Type getBlockType(uint8_t id);
+}
+
+namespace NativeComponent::Types {
+    template<typename T>
+    class TypeBase {
+
+    public:
+        T getValue();
+
+    protected:
+        T value;
+
+        void Set(T data);
+    };
+
+    class INT16 : TypeBase<unsigned short> {
+    public:
+        friend std::istream &operator>>(std::istream &input, INT16 &obj);
+
+    protected:
+        void setValue(unsigned char *arr, std::size_t len);
+    };
+
+    class INT64 : TypeBase<unsigned long long> {
+    public:
+        friend std::istream &operator>>(std::istream &input, INT64 &obj);
+
+        friend std::ostream &operator<<(std::ostream &output, const INT64 &obj);
+
+    protected:
+        void setValue(unsigned char *arr, std::size_t len);
+    };
 }
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H

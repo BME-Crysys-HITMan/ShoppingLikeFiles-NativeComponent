@@ -27,11 +27,14 @@
 //
 
 #include <iostream>
+#include <streambuf>
 #include <string>
-#include <cstdlib>
 #include <sstream>
 #include <fstream>
 #include "CAFF_Processor.h"
+#include "Utils.h"
+
+namespace Type = NativeComponent::Types;
 
 void printArgs(int argc, char **argv) {
     std::ofstream fout;
@@ -51,6 +54,46 @@ void printArgs(int argc, char **argv) {
     fout.close();
 }
 
+void fileProcess(const char *fileName) {
+    std::ifstream file(fileName, std::ios::binary);
+
+    if (file) {
+        std::iostream customStream(file.rdbuf());
+        char buff[15];
+
+        customStream.read(buff, 15);
+
+        for (char &i: buff) {
+            auto c = (uint8_t) i;
+            auto x = (int) (c);
+            std::cout << "Original Value: " << std::hex << i << std::dec << "Integer version" << x << std::endl;
+        }
+
+        std::stringstream ss;
+
+        ss.rdbuf()->sputc(0x01);
+        ss.rdbuf()->sputc(0x14);
+        ss.rdbuf()->sputc(0x00);
+        ss.rdbuf()->sputc(0x00);
+        ss.rdbuf()->sputc(0x00);
+        ss.rdbuf()->sputc(0x00);
+        ss.rdbuf()->sputc(0x00);
+        ss.rdbuf()->sputc(0x00);
+        ss.rdbuf()->sputc(0x00);
+
+        uint8_t id;
+        Type::INT64 len;
+
+        ss >> id >> len;
+
+        std::cout << "blockId: " << (int) id << std::endl << "block length: " << len << std::endl;
+
+        //delete[] buff;
+    }
+
+    file.close();
+}
+
 int main(int argc, char **argv) {
     printArgs(argc, argv);
 
@@ -58,6 +101,8 @@ int main(int argc, char **argv) {
         std::cout << "Usage: application /path/to/file" << std::endl;
         exit(-1);
     }
+
+    fileProcess(argv[1]);
 
     CAFF::CAFFProcessor processor(argv[1]);
 

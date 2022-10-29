@@ -81,7 +81,7 @@ bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) 
  * @return Returns true if requirements met for a well-formed tags field.
  */
 bool validateTags(char *tags, std::size_t length) {
-
+    return true;
 }
 
 /**

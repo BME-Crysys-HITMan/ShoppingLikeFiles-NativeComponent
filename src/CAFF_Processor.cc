@@ -42,7 +42,7 @@ namespace CAFF {
     }
 
     CAFFProcessor::~CAFFProcessor() {
-        delete fileName;
+        delete[] fileName;
     }
 
     CAFFProcessor::CAFFProcessor(const char *filename) : CAFFProcessor() {
