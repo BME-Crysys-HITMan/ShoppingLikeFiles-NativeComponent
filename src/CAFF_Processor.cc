@@ -61,6 +61,10 @@ namespace CAFF {
         }
         std::cout << n;
         return true;
+
+        //CAFF Validation.h
+
+        //CIFF_Processor.h
     }
 
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {

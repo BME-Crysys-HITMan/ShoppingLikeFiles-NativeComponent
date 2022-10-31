@@ -76,6 +76,7 @@ namespace CIFF {
 
         Pixel *GetImage(uint8_t *data, Header *header);
 
+        //CIFF_Validation.h
         bool IsValid(uint8_t *data);
     };
 }

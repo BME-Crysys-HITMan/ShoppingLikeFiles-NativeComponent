@@ -40,6 +40,8 @@ namespace CAFF {
         uint8_t day;
         uint8_t hour;
         uint8_t minute;
+        //Creator
+        //CIFF tags *
     };
 
     struct Header {

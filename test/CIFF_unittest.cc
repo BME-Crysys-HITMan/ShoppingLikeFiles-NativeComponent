@@ -29,7 +29,7 @@
 #include <CIFF_Processor.h>
 
 TEST(CIFF_SUITE, PixelSizeNotEqualToContentSize) {
-    /*CIFF::CIFFProcessor *proc = new CIFF::CIFFProcessor();
+    /*auto *proc = new CIFF::CIFFProcessor();
 
     uint8_t *data = new uint8_t[60];
     CIFF::Header header;

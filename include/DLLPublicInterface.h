@@ -41,6 +41,12 @@ bool ValidateFile(CAFF::CAFFProcessor *proc);
 CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc);
 CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc);
 void GetTags(CAFF::CAFFProcessor *proc);
+
+//1)Init
+//2)Validate
+//3)GetCredit
+//4)GenerateThumbnail
+
 #ifdef __cplusplus
 }
 #endif
