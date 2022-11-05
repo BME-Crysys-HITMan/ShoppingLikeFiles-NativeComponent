@@ -31,11 +31,13 @@
 
 #include <string>
 #include "CIFF_Processor.h"
+#include "Utils.h"
 
 
 namespace CAFF {
+    namespace Types = NativeComponent::Types;
     struct Credit {
-        uint16_t year;
+        Types::INT16 year;
         uint8_t month;
         uint8_t day;
         uint8_t hour;
