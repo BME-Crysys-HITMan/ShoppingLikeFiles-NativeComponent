@@ -30,8 +30,6 @@
 #include <CAFF_Processor.h>
 #include <iostream>
 #include <fstream>
-#include <random>
-#include <chrono>
 #include "Utils.h"
 #include "CAFF_validation.h"
 #include "BasicBlock.h"
@@ -39,19 +37,24 @@
 BasicBlock GetBlock(std::ifstream &stream) {
     unsigned char id;
     NativeComponent::Types::INT64 size;
-    stream >> id >> size;
 
-    auto *content = new unsigned char[size.getValue()];
+    stream >> id;
+    stream >> size;
+    char c;
+    stream >> c;
+    char content[size.getValue()];
 
+    auto siz = stream.readsome(&content[0], size.getValue());
     /**
      * Maybe size.getValue() converted to signed could be negative.
      */
-    if (stream.read((char *) content, (std::streamsize) size.getValue())) {
-        BasicBlock block = {
+    if (siz == size.getValue()) {
+        BasicBlock block{
                 CAFF::Utils::getBlockType(id),
-                size,
-                content
+                size
         };
+
+        block.setData((unsigned char *) content);
 
         return block;
     }
@@ -71,8 +74,7 @@ namespace CAFF {
     }
 
     CAFFProcessor::CAFFProcessor(const char *filename) : CAFFProcessor() {
-        fileName = new char[strlen(filename)];
-        memcpy(fileName, filename, strlen(filename));
+        fileName = filename;
     }
 
     bool CAFFProcessor::ValidateFile() {
@@ -87,8 +89,12 @@ namespace CAFF {
             bool isValid;
 
             auto block = GetBlock(fileStream);
-
-            isValid = ValidateHeader(block.data, block.contentSize.getValue());
+            /*std::cout << "DEBUG" << std::endl;
+            for (std::size_t i = 0; i < block.contentSize.getValue(); ++i) {
+                std::cout << (int) *block.data++ << std::endl;
+            }*/
+            uint64_t numAnim;
+            isValid = ValidateHeader(block.data, block.contentSize.getValue(), &numAnim);
 
             if (!isValid)
                 return isValid;
@@ -101,7 +107,11 @@ namespace CAFF {
                         isValid = ValidateCredits(block.data, block.contentSize.getValue());
                         break;
                     case Utils::Animation:
+                        if (numAnim == 0)
+                            return false;
+
                         isValid = ValidateAnimation(block.data, block.contentSize.getValue());
+                        --numAnim;
                         break;
                     default:
                         return false;
@@ -124,9 +134,9 @@ namespace CAFF {
         std::ifstream file;
         file.open(this->fileName);
 
-        while(!hasCiff){
+        while (!hasCiff) {
             auto block = GetBlock(file);
-            if(block.blockType == Utils::Animation){
+            if (block.blockType == Utils::Animation) {
                 hasCiff = true;
                 CIFF::CIFFProcessor proc;
 

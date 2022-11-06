@@ -20,20 +20,26 @@
 // SOFTWARE.
 
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/5/2022.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
 //
+#include "CIFF_Processor.h"
+#include "CIFF_validation.h"
 
-#ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
-#define SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
 
-#include "Utils.h"
+CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
+    return nullptr;
+}
 
-struct BasicBlock{
-    CAFF::Utils::CAFF_Block_Type blockType;
-    NativeComponent::Types::INT64 contentSize;
-    unsigned char *data;
-    void setData(const unsigned char *data);
-    ~BasicBlock();
-};
+CIFF::Pixel *CIFF::CIFFProcessor::GetImage(uint8_t *data, CIFF::Header *header) {
+    return nullptr;
+}
 
-#endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
+bool CIFF::CIFFProcessor::IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize) {
+    bool isValid = validateHeader(data);
+    if(!isValid)
+        return isValid;
+
+    isValid = validateContent(data, ciffSize.getValue());
+
+    return isValid;
+}

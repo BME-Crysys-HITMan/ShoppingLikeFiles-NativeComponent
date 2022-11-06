@@ -79,13 +79,13 @@ namespace NativeComponent::Types {
 
     class INT64 : public TypeBase<unsigned long long> {
     public:
+        unsigned long long getValue();
         friend std::istream &operator>>(std::istream &input, INT64 &obj);
 
         friend std::ostream &operator<<(std::ostream &output, const INT64 &obj);
-        void FromArray(std::vector<char> &&vec);
+        void FromArray(std::vector<char> vec);
     protected:
         void setValue(unsigned char *arr, std::size_t len);
     };
 }
-
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H

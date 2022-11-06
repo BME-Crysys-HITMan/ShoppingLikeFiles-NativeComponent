@@ -20,20 +20,18 @@
 // SOFTWARE.
 
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/5/2022.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
 //
 
-#ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
-#define SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
+#include "BasicBlock.h"
 
-#include "Utils.h"
+BasicBlock::~BasicBlock() {
+    delete[] data;
+}
 
-struct BasicBlock{
-    CAFF::Utils::CAFF_Block_Type blockType;
-    NativeComponent::Types::INT64 contentSize;
-    unsigned char *data;
-    void setData(const unsigned char *data);
-    ~BasicBlock();
-};
-
-#endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
+void BasicBlock::setData(const unsigned char *data) {
+    this->data = new unsigned char[this->contentSize.getValue()];
+    for (std::size_t i = 0; i < this->contentSize.getValue(); ++i) {
+        this->data[i] = data[i];
+    }
+}

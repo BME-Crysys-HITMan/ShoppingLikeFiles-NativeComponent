@@ -20,20 +20,18 @@
 // SOFTWARE.
 
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/5/2022.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
 //
 
-#ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
-#define SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
 
-#include "Utils.h"
+#include "CAFF_Processor.h"
 
-struct BasicBlock{
-    CAFF::Utils::CAFF_Block_Type blockType;
-    NativeComponent::Types::INT64 contentSize;
-    unsigned char *data;
-    void setData(const unsigned char *data);
-    ~BasicBlock();
-};
+int main(int argv, char **argc) {
+    std::string fileName("C:\\Users\\96dan\\Documents\\BME\\MSc\\SzamBiz\\ShoppingLikeFiles-NativeComponent\\afl\\testfiles\\1.caff");
+    CAFF::CAFFProcessor proc(fileName.c_str());
 
-#endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
+    auto isValid = proc.ValidateFile();
+
+    std::cerr << isValid << std::endl;
+    return 0;
+}

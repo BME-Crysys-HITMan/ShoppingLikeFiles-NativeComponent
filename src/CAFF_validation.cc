@@ -25,11 +25,12 @@
 // Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
 //
 #include "CAFF_validation.h"
+#include "CIFF_Processor.h"
 #include <cstring>
 #include <string>
 
 template<typename T>
-void GetData(uint8_t *data, int start, int length, T *result) {
+void GetData(uint8_t *data, uint64_t start, uint64_t length, T *result) {
     mempcpy((char *) result, &data[start], length);
 }
 
@@ -43,13 +44,23 @@ bool ValidateHeader_HeaderSize(uint8_t *data, int start, int headerSizeLength, s
     return expectedHeaderSize == header_size;
 }
 
-bool ValidateHeader(uint8_t *data, std::size_t length, int64_t *num_anim) {
+bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *num_anim) {
     int magicLength = 4;
     int headerSizeLength = 8;
     int numAnimLength = 8;
     if (length != magicLength + headerSizeLength + numAnimLength)
         return false;
     GetData(data, magicLength + headerSizeLength, numAnimLength, num_anim);
+
+    /*NativeComponent::Types::INT64 numAnim;
+    std::vector<char> arr;
+    for (int i = 0; i < 8; ++i) {
+        arr.push_back(data[12+i]);
+    }
+    numAnim.FromArray(arr);
+
+    *num_anim = numAnim.getValue();*/
+
     return ValidateHeader_Magic(data, magicLength)
            && ValidateHeader_HeaderSize(data, magicLength, headerSizeLength, length);
 }
@@ -89,11 +100,15 @@ bool ValidateCredits(uint8_t *data, std::size_t length) {
 
 bool ValidateAnimation(uint8_t *data, std::size_t length)
 {
-    int durationSize = 8; int64_t duration; GetData(data, 0, durationSize, &duration);
+    unsigned long long durationSize = 8; int64_t duration; GetData(data, 0, durationSize, &duration);
 
-    int ciffSize=length-durationSize;
-    uint8_t *ciff= new uint8_t[sizeof(uint8_t) * ciffSize];
-    GetData(data, durationSize, ciffSize, ciff);
-    //return CIFF_Validate(ciff, ciffSize);
-    return true;
+    NativeComponent::Types::INT64 ciffSize;
+
+    std::vector<char> arr(data, data+8);
+    ciffSize.FromArray(arr);
+
+    auto *ciff= new uint8_t[sizeof(uint8_t) * ciffSize.getValue()];
+    GetData(data, durationSize, ciffSize.getValue(), ciff);
+    CIFF::CIFFProcessor proc;
+    return proc.IsValid(ciff, ciffSize);
 }

@@ -139,7 +139,12 @@ size_t getLong(uint8_t *data){
 }
 
 bool validateContent(uint8_t *data, std::size_t content_size) {
-    return (sizeof data) == content_size;
+    std::vector<char> arr(data+4, data+11);
+    std::vector<char> cSiz(data+12, data+19);
+    NativeComponent::Types::INT64 headerSize, cSize;
+    headerSize.FromArray(arr);
+    cSize.FromArray(cSiz);
+    return content_size == headerSize.getValue() + cSize.getValue();
 }
 
 bool validateHeader(uint8_t *data) {

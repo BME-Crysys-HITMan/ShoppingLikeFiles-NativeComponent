@@ -57,7 +57,7 @@ namespace CAFF {
 
     class CAFFProcessor {
     private:
-        char *fileName;
+        const char *fileName;
         Header header;
         Credit metadata;
 

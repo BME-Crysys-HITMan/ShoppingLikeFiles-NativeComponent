@@ -105,7 +105,7 @@ std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComp
 
     auto print = [](const uint8_t &c) { std::cout << (int) (c) << std::endl; };
 
-    std::for_each(&arr[0], &arr[7], print);
+    std::for_each(&arr[0], &arr[7]+1, print);
 
     obj.setValue(arr, 8);
     return input;
@@ -117,6 +117,10 @@ std::ostream &NativeComponent::Types::operator<<(std::ostream &output, const Nat
     return output;
 }
 
-void NativeComponent::Types::INT64::FromArray(std::vector<char> &&vec) {
+void NativeComponent::Types::INT64::FromArray(std::vector<char> vec) {
     this->setValue((unsigned char *) vec.data(), vec.size());
+}
+
+unsigned long long NativeComponent::Types::INT64::getValue() {
+    return TypeBase::getValue();
 }

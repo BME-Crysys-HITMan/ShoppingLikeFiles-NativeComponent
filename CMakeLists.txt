@@ -24,9 +24,17 @@ add_library(ShoppingLikeFiles_NativeComponent SHARED
         include/DLLPublicInterface.h
         src/DLLPublicInterface.cc
         src/CAFF_Processor.cc
-        src/Util.cc)
+        src/Util.cc src/CIFF_Processor.cc src/BasicBlock.cc)
+
+add_executable(Debug
+        src/DLLPublicInterface.cc
+        src/CAFF_Processor.cc
+        src/CAFF_validation.cc
+        src/CIFF_validation.cc
+        src/Util.cc src/main.cc src/CIFF_Processor.cc src/BasicBlock.cc)
 
 target_include_directories(ShoppingLikeFiles_NativeComponent PRIVATE include)
+target_include_directories(Debug PRIVATE include)
 
 enable_testing()
 add_subdirectory(test)
