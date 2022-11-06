@@ -28,6 +28,7 @@
 #include "Utils.h"
 #include <bit>
 #include <string>
+#include <vector>
 
 bool NativeComponent::Utils::isLittleEndian() {
     if constexpr (std::endian::native == std::endian::little) {
@@ -49,7 +50,7 @@ CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
             return CAFF::Utils::CAFF_Block_Type::Animation;
         }
         default: {
-            throw std::exception();
+            return CAFF::Utils::CAFF_Block_Type::Unknown;
         }
     }
 }
@@ -114,4 +115,8 @@ std::ostream &NativeComponent::Types::operator<<(std::ostream &output, const Nat
     output << obj.value;
 
     return output;
+}
+
+void NativeComponent::Types::INT64::FromArray(std::vector<char> &&vec) {
+    this->setValue((unsigned char *) vec.data(), vec.size());
 }

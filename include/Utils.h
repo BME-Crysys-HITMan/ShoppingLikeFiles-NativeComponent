@@ -31,6 +31,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <vector>
 
 namespace NativeComponent::Utils {
     bool isLittleEndian();
@@ -40,7 +41,8 @@ namespace CAFF::Utils {
     enum CAFF_Block_Type {
         Header,
         Credits,
-        Animation
+        Animation,
+        Unknown
     };
 
     /**
@@ -75,12 +77,12 @@ namespace NativeComponent::Types {
         void setValue(unsigned char *arr, std::size_t len);
     };
 
-    class INT64 : TypeBase<unsigned long long> {
+    class INT64 : public TypeBase<unsigned long long> {
     public:
         friend std::istream &operator>>(std::istream &input, INT64 &obj);
 
         friend std::ostream &operator<<(std::ostream &output, const INT64 &obj);
-
+        void FromArray(std::vector<char> &&vec);
     protected:
         void setValue(unsigned char *arr, std::size_t len);
     };

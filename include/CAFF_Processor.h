@@ -43,7 +43,10 @@ namespace CAFF {
         uint8_t hour;
         uint8_t minute;
         //Creator
+        std::string creator;
         //CIFF tags *
+        std::string* tags;
+
     };
 
     struct Header {
@@ -55,7 +58,6 @@ namespace CAFF {
     class CAFFProcessor {
     private:
         char *fileName;
-        bool isLittleEndian;
         Header header;
         Credit metadata;
 
@@ -69,6 +71,8 @@ namespace CAFF {
         bool ValidateFile();
 
         CIFF::Pixel *GenerateThumbnailImage();
+
+        Credit GetCredits();
     };
 }
 
