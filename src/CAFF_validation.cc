@@ -21,20 +21,79 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 //
 // Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
 //
 #include "CAFF_validation.h"
+#include <cstring>
+#include <string>
 
-bool ValidateHeader(uint8_t *data, std::size_t length) {
-    return false;
+template<typename T>
+void GetData(uint8_t *data, int start, int length, T *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+bool ValidateHeader_Magic(uint8_t *data, int end) {
+    return std::string((char *) data, end) == "CAFF";
+}
+
+bool ValidateHeader_HeaderSize(uint8_t *data, int start, int headerSizeLength, std::size_t expectedHeaderSize) {
+    int64_t header_size;
+    GetData(data, start, headerSizeLength, &header_size);
+    return expectedHeaderSize == header_size;
+}
+
+bool ValidateHeader(uint8_t *data, std::size_t length, int64_t *num_anim) {
+    int magicLength = 4;
+    int headerSizeLength = 8;
+    int numAnimLength = 8;
+    if (length != magicLength + headerSizeLength + numAnimLength)
+        return false;
+    GetData(data, magicLength + headerSizeLength, numAnimLength, num_anim);
+    return ValidateHeader_Magic(data, magicLength)
+           && ValidateHeader_HeaderSize(data, magicLength, headerSizeLength, length);
+}
+
+bool ContainsOnlyASCII(char *string, int size) {
+    for (int i=0; i<size; i++) {
+        if (static_cast<unsigned char>(string[i]) > 127) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool ValidateCredits(uint8_t *data, std::size_t length) {
-    return false;
+    int start = 0;
+    int yearSize = 2; int16_t year; GetData(data, start, yearSize, &year); start += yearSize;
+
+    int monthSize = 1; int8_t month; GetData(data, start, monthSize, &month); start += monthSize;
+
+    int daySize = 1; int8_t day; GetData(data, start, daySize, &day); start += daySize;
+
+    int hourSize = 1; int8_t hour; GetData(data, start, hourSize, &hour); start+=hourSize;
+
+    int minuteSize = 1; int8_t minute; GetData(data, start, minuteSize, &minute); start+=minuteSize;
+
+    int creator_lenSize=8; int64_t creator_len; GetData(data, start, creator_lenSize, &creator_len);
+    start+=creator_lenSize;
+
+    if (length!= start+creator_len)
+        return false;
+
+    char creator[creator_len];
+    GetData(data, start, (int)creator_len, creator );
+
+    return  ContainsOnlyASCII(creator, creator_len);
 }
 
-bool ValidateAnimation(uint8_t *data, std::size_t length) {
-    return false;
+bool ValidateAnimation(uint8_t *data, std::size_t length)
+{
+    int durationSize = 8; int64_t duration; GetData(data, 0, durationSize, &duration);
+
+    int ciffSize=length-durationSize;
+    uint8_t *ciff= new uint8_t[sizeof(uint8_t) * ciffSize];
+    GetData(data, durationSize, ciffSize, ciff);
+    //return CIFF_Validate(ciff, ciffSize);
+    return true;
 }
