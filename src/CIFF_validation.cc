@@ -34,13 +34,7 @@
  */
 #define NUMBER_OF_PIXELS = 3;
 
-bool validateHeader(uint8_t *data) {
-    return false;
-}
 
-bool validateContent(uint8_t *data, std::size_t content_size) {
-    return false;
-}
 
 /**
  * This method validates a CIFF magic string.
@@ -49,7 +43,7 @@ bool validateContent(uint8_t *data, std::size_t content_size) {
  * @return Returns true if magic is 'CIFF', otherwise return false
  */
 bool validateMagicString(uint8_t *magic) {
-    return true;
+    return std::string(magic, magic + 4) == "CIFF";
 }
 
 /**
@@ -64,7 +58,7 @@ bool validateMagicString(uint8_t *magic) {
  * @return Returns true if contentSize is valid.
  */
 bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) {
-    return true;
+    return contentSize == width * height * 3;
 }
 
 /**
@@ -81,7 +75,10 @@ bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) 
  * @return Returns true if requirements met for a well-formed tags field.
  */
 bool validateTags(char *tags, std::size_t length) {
-    return true;
+    std::string s(tags, length);
+    if ( std::count(s.begin(), s.end(), '\n') > 0 )
+        return false;
+    return s.at(length - 1) == '\0';
 }
 
 /**
@@ -94,7 +91,7 @@ bool validateTags(char *tags, std::size_t length) {
  * @return
  */
 size_t getCaptionLength(uint8_t *caption) {
-    return 0;
+    return std::string(caption, caption + sizeof caption - 1).find('\n') + 1;
 }
 
 /**
@@ -108,11 +105,13 @@ size_t getCaptionLength(uint8_t *caption) {
  * 5) The rest is made up of tags field
  *
  * @param headerSize Size of the header block.
- * @param captionSize Length of caption field.
+ * @param captionLength Length of caption field.
  * @return Size of tags field.
  */
-size_t getTagsLength(size_t headerSize, std::size_t captionSize) {
-    return 0;
+size_t getTagsLength(size_t headerSize, std::size_t captionLength) {
+    size_t magicLength = 4;
+    size_t headerConstantLength = 32;
+    return headerSize - magicLength - headerConstantLength - captionLength;
 }
 
 
@@ -126,5 +125,38 @@ size_t getTagsLength(size_t headerSize, std::size_t captionSize) {
  * @return true, if header size is acceptable.
  */
 bool validateHeaderSize(std::size_t headerSize, std::size_t captionLength, std::size_t tagsLength) {
-    return false;
+    size_t magicLength = 4;
+    size_t headerConstantLength = 32;
+    return headerSize == (magicLength + headerConstantLength + captionLength + tagsLength);
+}
+
+size_t getLong(uint8_t *data){
+    uint8_t tmp[8];
+    for( size_t i = 0; i < 8; i++ ){
+        tmp[i] = data[i];
+    }
+    return reinterpret_cast<size_t>(tmp);
+}
+
+bool validateContent(uint8_t *data, std::size_t content_size) {
+    return (sizeof data) == content_size;
+}
+
+bool validateHeader(uint8_t *data) {
+    if( !validateMagicString(data) )
+        return false;
+    size_t content_size = getLong(data + 12);
+
+    size_t width = getLong(data+20);
+    size_t height = getLong(data+28);
+    if( !validateContentSize(content_size, width, height ) )
+        return false;
+
+    size_t captionLength = getCaptionLength(data + 36);
+    size_t header_size = getLong(data+4);
+    size_t tagsLength = getTagsLength(header_size, captionLength);
+    if( !validateHeaderSize(header_size, captionLength, tagsLength) )
+        return false;
+
+    return true;
 }
