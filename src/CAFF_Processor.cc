@@ -35,31 +35,24 @@
 #include "BasicBlock.h"
 
 BasicBlock GetBlock(std::ifstream &stream) {
-    unsigned char id;
+    char id;
     NativeComponent::Types::INT64 size;
+    stream.read(&id, 1);
+    stream.read((char *)&size, 8);
 
-    stream >> id;
-    stream >> size;
-    char c;
-    stream >> c;
     char content[size.getValue()];
-
-    auto siz = stream.readsome(&content[0], size.getValue());
+    stream.read(content, size.getValue());
     /**
      * Maybe size.getValue() converted to signed could be negative.
      */
-    if (siz == size.getValue()) {
-        BasicBlock block{
-                CAFF::Utils::getBlockType(id),
-                size
-        };
+    BasicBlock block{
+        CAFF::Utils::getBlockType(id),
+        size
+    };
 
-        block.setData((unsigned char *) content);
+    block.setData((uint8_t *)content);
 
-        return block;
-    }
-
-    throw std::exception();
+    return block;
 }
 
 namespace CAFF {
@@ -89,28 +82,25 @@ namespace CAFF {
             bool isValid;
 
             auto block = GetBlock(fileStream);
-            /*std::cout << "DEBUG" << std::endl;
-            for (std::size_t i = 0; i < block.contentSize.getValue(); ++i) {
-                std::cout << (int) *block.data++ << std::endl;
-            }*/
+
             uint64_t numAnim;
-            isValid = ValidateHeader(block.data, block.contentSize.getValue(), &numAnim);
+            isValid = ValidateHeader((uint8_t *)block.data, block.contentSize.getValue(), &numAnim);
 
             if (!isValid)
                 return isValid;
 
-            while (!fileStream) {
-                block = GetBlock(fileStream);
+            while (fileStream.good()) {
+                auto block = GetBlock(fileStream);
 
                 switch (block.blockType) {
                     case Utils::Credits:
-                        isValid = ValidateCredits(block.data, block.contentSize.getValue());
+                        isValid = ValidateCredits((uint8_t *)block.data, block.contentSize.getValue());
                         break;
                     case Utils::Animation:
                         if (numAnim == 0)
                             return false;
 
-                        isValid = ValidateAnimation(block.data, block.contentSize.getValue());
+                        isValid = ValidateAnimation((uint8_t *)block.data, block.contentSize.getValue());
                         --numAnim;
                         break;
                     default:
