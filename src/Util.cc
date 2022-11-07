@@ -69,7 +69,7 @@ void Type::TypeBase<T>::Set(T data) {
 
 
 std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComponent::Types::INT16 &obj) {
-    uint8_t arr[2];
+    char arr[2];
 
     input >> arr;
 
@@ -78,26 +78,35 @@ std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComp
     return input;
 }
 
-void NativeComponent::Types::INT16::setValue(unsigned char *arr, std::size_t len) {
+void NativeComponent::Types::INT16::setValue(char *arr, std::size_t len) {
     if (len == 2) {
-        uint16_t data = *reinterpret_cast<uint16_t *>(arr);
+        char d[2] = {arr[0], arr[1]};
+        auto data = std::bit_cast<uint16_t>(d);
         this->Set(data);
     }
 }
 
-void NativeComponent::Types::INT64::setValue(unsigned char *arr, std::size_t len) {
+void NativeComponent::Types::INT64::setValue(char *arr, std::size_t len) {
     bool little = Utils::isLittleEndian();
     if (len == 8) {
+        char d[8];
         if (little) {
-            uint64_t data = *reinterpret_cast<uint64_t *>(arr);
-            this->Set(data);
+            for (std::size_t i = 0; i < len; ++i) {
+                d[i] = arr[i];
+            }
+        } else {
+            for (std::size_t i = 0; i < len; ++i) {
+                d[i] = arr[7 - i];
+            }
         }
+        auto data = std::bit_cast<uint64_t>(d);
+        this->Set(data);
     }
 }
 
 std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComponent::Types::INT64 &obj) {
     std::cout << "INT64 operator>>" << std::endl;
-    uint8_t arr[8];
+    char arr[8];
 
     input >> arr;
 
@@ -105,7 +114,7 @@ std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComp
 
     auto print = [](const uint8_t &c) { std::cout << (int) (c) << std::endl; };
 
-    std::for_each(&arr[0], &arr[7]+1, print);
+    std::for_each(&arr[0], &arr[7] + 1, print);
 
     obj.setValue(arr, 8);
     return input;
@@ -118,9 +127,22 @@ std::ostream &NativeComponent::Types::operator<<(std::ostream &output, const Nat
 }
 
 void NativeComponent::Types::INT64::FromArray(std::vector<char> vec) {
-    this->setValue((unsigned char *) vec.data(), vec.size());
+    this->setValue(vec.data(), vec.size());
 }
 
 unsigned long long NativeComponent::Types::INT64::getValue() {
     return TypeBase::getValue();
+}
+
+NativeComponent::Types::INT64::INT64() : TypeBase() {
+    this->Set(0);
+}
+
+NativeComponent::Types::INT64::INT64(unsigned long long int initial) : TypeBase() {
+    this->Set(initial);
+}
+
+NativeComponent::Types::INT64::INT64(const char arr[]) : TypeBase() {
+    auto value = std::bit_cast<uint64_t>(arr);
+    this->Set(value);
 }

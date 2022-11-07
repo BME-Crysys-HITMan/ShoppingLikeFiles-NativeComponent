@@ -25,6 +25,7 @@
 
 
 #include "CAFF_Processor.h"
+#include <bit>
 
 int main(int argv, char **argc) {
     std::string fileName(
@@ -34,5 +35,6 @@ int main(int argv, char **argc) {
     auto isValid = proc.ValidateFile();
 
     std::cerr << isValid << std::endl;
+
     return 0;
 }

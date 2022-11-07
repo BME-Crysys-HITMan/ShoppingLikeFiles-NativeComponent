@@ -66,7 +66,7 @@ bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *num_anim) {
 }
 
 bool ContainsOnlyASCII(char *string, int size) {
-    for (int i=0; i<size; i++) {
+    for (int i = 0; i < size; i++) {
         if (static_cast<unsigned char>(string[i]) > 127) {
             return false;
         }
@@ -76,39 +76,56 @@ bool ContainsOnlyASCII(char *string, int size) {
 
 bool ValidateCredits(uint8_t *data, std::size_t length) {
     int start = 0;
-    int yearSize = 2; int16_t year; GetData(data, start, yearSize, &year); start += yearSize;
+    int yearSize = 2;
+    int16_t year;
+    GetData(data, start, yearSize, &year);
+    start += yearSize;
 
-    int monthSize = 1; int8_t month; GetData(data, start, monthSize, &month); start += monthSize;
+    int monthSize = 1;
+    int8_t month;
+    GetData(data, start, monthSize, &month);
+    start += monthSize;
 
-    int daySize = 1; int8_t day; GetData(data, start, daySize, &day); start += daySize;
+    int daySize = 1;
+    int8_t day;
+    GetData(data, start, daySize, &day);
+    start += daySize;
 
-    int hourSize = 1; int8_t hour; GetData(data, start, hourSize, &hour); start+=hourSize;
+    int hourSize = 1;
+    int8_t hour;
+    GetData(data, start, hourSize, &hour);
+    start += hourSize;
 
-    int minuteSize = 1; int8_t minute; GetData(data, start, minuteSize, &minute); start+=minuteSize;
+    int minuteSize = 1;
+    int8_t minute;
+    GetData(data, start, minuteSize, &minute);
+    start += minuteSize;
 
-    int creator_lenSize=8; int64_t creator_len; GetData(data, start, creator_lenSize, &creator_len);
-    start+=creator_lenSize;
+    int creator_lenSize = 8;
+    int64_t creator_len;
+    GetData(data, start, creator_lenSize, &creator_len);
+    start += creator_lenSize;
 
-    if (length!= start+creator_len)
+    if (length != start + creator_len)
         return false;
 
     char creator[creator_len];
-    GetData(data, start, (int)creator_len, creator );
+    GetData(data, start, (int) creator_len, creator);
 
-    return  ContainsOnlyASCII(creator, creator_len);
+    return ContainsOnlyASCII(creator, creator_len);
 }
 
-bool ValidateAnimation(uint8_t *data, std::size_t length)
-{
-    unsigned long long durationSize = 8; int64_t duration; GetData(data, 0, durationSize, &duration);
+bool ValidateAnimation(uint8_t *data, std::size_t length) {
+    unsigned long long durationSize = 8;
+    int64_t duration;
+    GetData(data, 0, durationSize, &duration);
 
-    NativeComponent::Types::INT64 ciffSize;
+    NativeComponent::Types::INT64 ciffSize(length);
 
-    std::vector<char> arr(data, data+8);
-    ciffSize.FromArray(arr);
+    unsigned long long contentLength = ciffSize.getValue() - durationSize;
 
-    auto *ciff= new uint8_t[sizeof(uint8_t) * ciffSize.getValue()];
-    GetData(data, durationSize, ciffSize.getValue(), ciff);
-    CIFF::CIFFProcessor proc;
+    auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
+    GetData(data, durationSize, contentLength, ciff);
+    CIFF::CIFFProcessor proc{};
     return proc.IsValid(ciff, ciffSize);
 }
