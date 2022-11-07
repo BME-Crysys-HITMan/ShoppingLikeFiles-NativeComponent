@@ -38,7 +38,7 @@ BasicBlock GetBlock(std::ifstream &stream) {
     char id;
     NativeComponent::Types::INT64 size;
     stream.read(&id, 1);
-    stream.read((char *)&size, 8);
+    stream.read((char *) &size, 8);
 
     char content[size.getValue()];
     stream.read(content, size.getValue());
@@ -46,11 +46,11 @@ BasicBlock GetBlock(std::ifstream &stream) {
      * Maybe size.getValue() converted to signed could be negative.
      */
     BasicBlock block{
-        CAFF::Utils::getBlockType(id),
-        size
+            CAFF::Utils::getBlockType(id),
+            size
     };
 
-    block.setData((uint8_t *)content);
+    block.setData((uint8_t *) content);
 
     return block;
 }
@@ -63,7 +63,7 @@ namespace CAFF {
     }
 
     CAFFProcessor::~CAFFProcessor() {
-        delete[] fileName;
+        //delete[] fileName;
     }
 
     CAFFProcessor::CAFFProcessor(const char *filename) : CAFFProcessor() {
@@ -84,7 +84,7 @@ namespace CAFF {
             auto block = GetBlock(fileStream);
 
             uint64_t numAnim;
-            isValid = ValidateHeader((uint8_t *)block.data, block.contentSize.getValue(), &numAnim);
+            isValid = ValidateHeader((uint8_t *) block.data, block.contentSize.getValue(), &numAnim);
 
             if (!isValid)
                 return isValid;
@@ -94,13 +94,13 @@ namespace CAFF {
 
                 switch (block.blockType) {
                     case Utils::Credits:
-                        isValid = ValidateCredits((uint8_t *)block.data, block.contentSize.getValue());
+                        isValid = ValidateCredits((uint8_t *) block.data, block.contentSize.getValue());
                         break;
                     case Utils::Animation:
                         if (numAnim == 0)
                             return false;
 
-                        isValid = ValidateAnimation((uint8_t *)block.data, block.contentSize.getValue());
+                        isValid = ValidateAnimation((uint8_t *) block.data, block.contentSize.getValue());
                         --numAnim;
                         break;
                     default:

@@ -27,7 +27,8 @@
 #include "CAFF_Processor.h"
 
 int main(int argv, char **argc) {
-    std::string fileName("C:\\Users\\96dan\\Documents\\BME\\MSc\\SzamBiz\\ShoppingLikeFiles-NativeComponent\\afl\\testfiles\\1.caff");
+    std::string fileName(
+            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\testfiles\1.caff)");
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();
