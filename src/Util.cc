@@ -29,6 +29,42 @@
 #include <bit>
 #include <string>
 #include <vector>
+#include <cstring>
+
+template<typename T>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, T *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+template<>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, long long *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+template<>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, char *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+template<>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, short *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+template<>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, signed char *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+template<>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, unsigned char *result) {
+    mempcpy((char *) result, &data[start], length);
+}
+
+template<>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, unsigned long long *result) {
+    mempcpy((char *) result, &data[start], length);
+}
 
 bool NativeComponent::Utils::isLittleEndian() {
     if constexpr (std::endian::native == std::endian::little) {

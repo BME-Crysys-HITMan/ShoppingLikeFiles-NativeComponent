@@ -33,13 +33,32 @@
 #include "Utils.h"
 #include "CAFF_validation.h"
 #include "BasicBlock.h"
+#include <set>
+
+#define YEAR_OFFSET 0
+#define MONTH_OFFSET 2
+#define DAY_OFFSET 3
+#define HOUR_OFFSET 4
+#define MINUTE_OFFSET 5
+#define CREATOR_LENGTH_OFFSET 6
+#define CREATOR_OFFSET 14
+
+class fileEndReached : public std::exception {
+public:
+    const char *what() const noexcept override {
+        return "File end reached";
+    }
+};
 
 BasicBlock GetBlock(std::ifstream &stream) {
     char id;
     NativeComponent::Types::INT64 size;
-    stream.read(&id, 1);
-    stream.read((char *) &size, 8);
+    if (!(stream >> id)) {
+        std::cout << "End reached!" << std::endl;
+        throw fileEndReached();
+    }
 
+    stream.read((char *) &size, 8);
     char content[size.getValue()];
     stream.read(content, size.getValue());
     /**
@@ -56,17 +75,11 @@ BasicBlock GetBlock(std::ifstream &stream) {
 }
 
 namespace CAFF {
-    CAFFProcessor::CAFFProcessor() {
-        fileName = nullptr;
-        header = Header();
-        metadata = Credit();
-    }
-
     CAFFProcessor::~CAFFProcessor() {
         //delete[] fileName;
     }
 
-    CAFFProcessor::CAFFProcessor(const char *filename) : CAFFProcessor() {
+    CAFFProcessor::CAFFProcessor(const char *filename) {
         fileName = filename;
     }
 
@@ -77,13 +90,11 @@ namespace CAFF {
         if (!fileStream) {
             return false;
         }
-
+        bool isValid;
+        uint64_t numAnim;
         try {
-            bool isValid;
-
             auto block = GetBlock(fileStream);
 
-            uint64_t numAnim;
             isValid = ValidateHeader((uint8_t *) block.data, block.contentSize.getValue(), &numAnim);
 
             if (!isValid)
@@ -104,6 +115,9 @@ namespace CAFF {
                         --numAnim;
                         break;
                     default:
+                        if (numAnim == 0 && isValid) {
+                            return true;
+                        }
                         return false;
                 }
 
@@ -112,9 +126,18 @@ namespace CAFF {
             }
             return isValid;
         }
-        catch (std::exception &ex) {
+        catch (fileEndReached &ex) {
+            if (isValid && numAnim == 0) {
+                return true;
+            }
+            std::cerr << ex.what() << std::endl;
             return false;
         }
+        catch (std::exception &ex) {
+            std::cerr << ex.what() << std::endl;
+            return false;
+        }
+
     }
 
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
@@ -131,6 +154,10 @@ namespace CAFF {
                 CIFF::CIFFProcessor proc;
 
                 auto header = proc.ProcessHeader(block.data);
+
+                this->metadata.height = header->height;
+                this->metadata.width = header->width;
+
                 pixels = proc.GetImage(block.data, header);
 
                 /**
@@ -142,8 +169,25 @@ namespace CAFF {
         return pixels;
     }
 
+
     Credit CAFFProcessor::GetCredits() {
         return this->metadata;
+    }
+
+    void CAFFProcessor::ProcessCredit(uint8_t *data) {
+        int creator_lenSize = 8;
+        int64_t creator_len;
+        GetData(data, CREATOR_LENGTH_OFFSET, creator_lenSize, &creator_len);
+
+        char creator[creator_len + 1];
+        GetData(data, CREATOR_OFFSET, creator_len, creator);
+
+        creator[creator_len] = '\0';
+        this->metadata.creator = std::string(creator);
+    }
+
+    void CAFFProcessor::ProcessTags(uint8_t *data) {
+
     }
 
 

@@ -25,7 +25,9 @@
 
 
 #include "CAFF_Processor.h"
-#include <bit>
+#include <string>
+#include <algorithm>
+#include <cstring>
 
 int main(int argv, char **argc) {
     std::string fileName(

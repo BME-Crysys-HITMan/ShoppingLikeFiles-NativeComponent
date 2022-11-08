@@ -50,7 +50,7 @@ namespace CIFF {
         std::string caption;
 
         // Variable size each ending with \0
-        std::string *tags;
+        std::vector<std::string> tags;
     };
 
     struct Pixel {

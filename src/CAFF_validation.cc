@@ -28,11 +28,8 @@
 #include "CIFF_Processor.h"
 #include <cstring>
 #include <string>
+#include "Utils.h"
 
-template<typename T>
-void GetData(uint8_t *data, uint64_t start, uint64_t length, T *result) {
-    mempcpy((char *) result, &data[start], length);
-}
 
 bool ValidateHeader_Magic(uint8_t *data, int end) {
     return std::string((char *) data, end) == "CAFF";
@@ -51,15 +48,6 @@ bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *num_anim) {
     if (length != magicLength + headerSizeLength + numAnimLength)
         return false;
     GetData(data, magicLength + headerSizeLength, numAnimLength, num_anim);
-
-    /*NativeComponent::Types::INT64 numAnim;
-    std::vector<char> arr;
-    for (int i = 0; i < 8; ++i) {
-        arr.push_back(data[12+i]);
-    }
-    numAnim.FromArray(arr);
-
-    *num_anim = numAnim.getValue();*/
 
     return ValidateHeader_Magic(data, magicLength)
            && ValidateHeader_HeaderSize(data, magicLength, headerSizeLength, length);
@@ -127,5 +115,7 @@ bool ValidateAnimation(uint8_t *data, std::size_t length) {
     auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
     GetData(data, durationSize, contentLength, ciff);
     CIFF::CIFFProcessor proc{};
-    return proc.IsValid(ciff, ciffSize);
+    auto valid = proc.IsValid(ciff, ciffSize);
+    delete[] ciff;
+    return valid;
 }

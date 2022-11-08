@@ -32,36 +32,26 @@
 #include <string>
 #include "CIFF_Processor.h"
 #include "Utils.h"
-
+#include <set>
 
 namespace CAFF {
     namespace Types = NativeComponent::Types;
     struct Credit {
-        Types::INT16 year;
-        uint8_t month;
-        uint8_t day;
-        uint8_t hour;
-        uint8_t minute;
+        uint64_t width;
+        uint64_t height;
         //Creator
         std::string creator;
-        //CIFF tags *
-        std::string* tags;
-
-    };
-
-    struct Header {
-        char *magicString;
-        uint8_t headerSize;
-        uint8_t numAnim;
     };
 
     class CAFFProcessor {
     private:
         const char *fileName;
-        Header header;
         Credit metadata;
+        std::set<std::string> tags;
 
-        CAFFProcessor();
+        void ProcessCredit(uint8_t *data);
+
+        void ProcessTags(uint8_t *data);
 
     public:
         explicit CAFFProcessor(const char *filename);

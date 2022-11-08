@@ -27,14 +27,13 @@
 //
 
 #include <sstream>
+#include <cstring>
 #include "CIFF_validation.h"
 
 /**
  * Pixel values in RGB.
  */
-#define NUMBER_OF_PIXELS = 3;
-
-
+#define NUMBER_OF_PIXELS 3;
 
 /**
  * This method validates a CIFF magic string.
@@ -42,8 +41,14 @@
  * @param magic 4 bytes of char
  * @return Returns true if magic is 'CIFF', otherwise return false
  */
-bool validateMagicString(uint8_t *magic) {
-    return std::string(magic, magic + 4) == "CIFF";
+bool validateMagicString(uint8_t *&magic) {
+    char mc[5];
+    for (int i = 0; i < 4; ++i) {
+        mc[i] = (char) *magic++;
+    }
+    mc[4] = '\0';
+    std::string s(mc);
+    return s == "CIFF";
 }
 
 /**
@@ -58,7 +63,7 @@ bool validateMagicString(uint8_t *magic) {
  * @return Returns true if contentSize is valid.
  */
 bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) {
-    return contentSize == width * height * 3;
+    return contentSize == width * height * NUMBER_OF_PIXELS;
 }
 
 /**
@@ -76,7 +81,7 @@ bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) 
  */
 bool validateTags(char *tags, std::size_t length) {
     std::string s(tags, length);
-    if ( std::count(s.begin(), s.end(), '\n') > 0 )
+    if (std::count(s.begin(), s.end(), '\n') > 0)
         return false;
     return s.at(length - 1) == '\0';
 }
@@ -91,7 +96,23 @@ bool validateTags(char *tags, std::size_t length) {
  * @return
  */
 size_t getCaptionLength(uint8_t *caption) {
-    return std::string(caption, caption + sizeof caption - 1).find('\n') + 1;
+    std::size_t len = 0;
+
+    return len;
+}
+
+
+std::string getCaption(uint8_t *data, std::size_t start) {
+    std::vector<char> vec;
+    uint8_t *p = data + start;
+    while (*p != '\n') {
+        auto c = (char) *p++;
+        vec.push_back(c);
+    }
+    vec.push_back('\0');
+    vec.shrink_to_fit();
+    std::string s(vec.data());
+    return s;
 }
 
 /**
@@ -130,38 +151,54 @@ bool validateHeaderSize(std::size_t headerSize, std::size_t captionLength, std::
     return headerSize == (magicLength + headerConstantLength + captionLength + tagsLength);
 }
 
-size_t getLong(uint8_t *data){
-    uint8_t tmp[8];
-    for( size_t i = 0; i < 8; i++ ){
-        tmp[i] = data[i];
-    }
-    return reinterpret_cast<size_t>(tmp);
+size_t getLong(uint8_t *data, size_t start, size_t len) {
+    std::size_t dat;
+    GetData(data, start, len, &dat);
+
+    return dat;
 }
 
 bool validateContent(uint8_t *data, std::size_t content_size) {
-    std::vector<char> arr(data+4, data+11);
-    std::vector<char> cSiz(data+12, data+19);
-    NativeComponent::Types::INT64 headerSize, cSize;
-    headerSize.FromArray(arr);
-    cSize.FromArray(cSiz);
-    return content_size == headerSize.getValue() + cSize.getValue();
+    auto headerSize = getLong(data, 4, 8);
+    auto cSize = getLong(data, 12, 8);
+    return content_size == headerSize + cSize;
 }
 
 bool validateHeader(uint8_t *data) {
-    if( !validateMagicString(data) )
-        return false;
-    size_t content_size = getLong(data + 12);
-
-    size_t width = getLong(data+20);
-    size_t height = getLong(data+28);
-    if( !validateContentSize(content_size, width, height ) )
+    if (!validateMagicString(data))
         return false;
 
-    size_t captionLength = getCaptionLength(data + 36);
-    size_t header_size = getLong(data+4);
+    size_t header_size = getLong(data, 0, 8);
+    size_t content_size = getLong(data, 8, 8);
+    size_t width = getLong(data, 16, 8);
+    size_t height = getLong(data, 24, 8);
+
+    if (!validateContentSize(content_size, width, height))
+        return false;
+
+    auto caption = getCaption(data, 32);
+
+    size_t captionLength = caption.length() + 1;
+
     size_t tagsLength = getTagsLength(header_size, captionLength);
-    if( !validateHeaderSize(header_size, captionLength, tagsLength) )
-        return false;
 
-    return true;
+    if (!validateHeaderSize(header_size, captionLength, tagsLength)) {
+        return false;
+    }
+
+    //char *tags = nullptr;
+
+    std::size_t tagsStart = 32 + captionLength;
+
+    uint8_t *start = data + tagsStart;
+    char c[tagsLength];
+    for (int i = 0; i < tagsLength; ++i) {
+        c[i] = static_cast<char>(*start++);
+    }
+
+    bool x = validateTags(c, tagsLength);
+
+    //delete[] tags;
+
+    return x;
 }

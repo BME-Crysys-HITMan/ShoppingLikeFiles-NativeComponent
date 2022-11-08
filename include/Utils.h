@@ -97,4 +97,8 @@ namespace NativeComponent::Types {
         void setValue(char *arr, std::size_t len);
     };
 }
+
+template<typename T>
+void GetData(uint8_t *data, uint64_t start, uint64_t length, T *result);
+
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
