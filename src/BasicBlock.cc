@@ -26,7 +26,7 @@
 #include "BasicBlock.h"
 
 BasicBlock::~BasicBlock() {
-    delete[] data;
+    //delete[] data;
 }
 
 void BasicBlock::setData(const unsigned char *data) {

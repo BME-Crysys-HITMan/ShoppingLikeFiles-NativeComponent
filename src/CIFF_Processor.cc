@@ -66,7 +66,6 @@ std::vector<std::string> CgetTags(uint8_t *data, uint64_t start, uint64_t len) {
 
 CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
     auto header = new Header();
-
     GetData(data, HEADER_SIZE_OFFSET, 8, &header->headerSize);
     GetData(data, CONTENT_SIZE_OFFSET, 8, &header->contentSize);
     GetData(data, WIDTH_OFFSET, 8, &header->width);
@@ -81,8 +80,19 @@ CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
 }
 
 CIFF::Pixel *CIFF::CIFFProcessor::GetImage(uint8_t *data, CIFF::Header *header) {
-    return nullptr;
+        auto *result = new CIFF::Pixel[sizeof(CIFF::Pixel) * (header->contentSize/3)];
+        int offset=header->headerSize;
+        for (int i = 0; i < header->contentSize/3; i+=3) {
+            int index=i+offset;
+            result[i/3]=CIFF::Pixel{
+                    data[index],
+                    data[index+1],
+                    data[index+2]
+            };
+        }
+        return result;
 }
+
 
 bool CIFF::CIFFProcessor::IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize) {
     bool isValid = validateHeader(data);

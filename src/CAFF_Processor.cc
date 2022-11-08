@@ -145,24 +145,35 @@ namespace CAFF {
 
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
         CIFF::Pixel *pixels = nullptr;
-        bool hasCiff = false;
+        std::ifstream ifs(this->fileName, std::ifstream::binary);
 
-        std::ifstream file;
-        file.open(this->fileName);
-
-        while (!hasCiff) {
-            auto block = GetBlock(file);
+        char ID;
+        int64_t length;
+        while (ifs.good()) {
+            ifs.read(&ID, 1);
+            int id = (int) ID;
+            ifs.read((char*)&length, 8);
+            char data[length];
+            ifs.read(data, length);
+            auto block=BasicBlock{
+                    CAFF::Utils::getBlockType(id),
+                    length,
+                    (uint8_t *) data
+            };
             if (block.blockType == Utils::Animation) {
-                hasCiff = true;
                 CIFF::CIFFProcessor proc;
-
-                auto header = proc.ProcessHeader(block.data);
+                unsigned long long durationSize = 8;
+                NativeComponent::Types::INT64 ciffSize(length);
+                unsigned long long contentLength = ciffSize.getValue() - durationSize;
+                auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
+                GetData(reinterpret_cast<uint8_t *>(data), durationSize, contentLength, ciff);
+                auto header = proc.ProcessHeader((uint8_t*)ciff);
 
                 this->metadata.height = header->height;
                 this->metadata.width = header->width;
 
-                pixels = proc.GetImage(block.data, header);
-
+                pixels = proc.GetImage((uint8_t*)ciff, header);
+                return pixels;
                 /**
                  * Could find non-0 length contentSize...
                  */
