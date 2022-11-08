@@ -28,11 +28,15 @@
 
 #include "Utils.h"
 
-struct BasicBlock{
+struct BasicBlock {
     CAFF::Utils::CAFF_Block_Type blockType;
     NativeComponent::Types::INT64 contentSize;
     unsigned char *data;
+
     void setData(const unsigned char *data);
+
+    BasicBlock() : data(nullptr), blockType(CAFF::Utils::CAFF_Block_Type::Unknown), contentSize() {};
+
     ~BasicBlock();
 };
 

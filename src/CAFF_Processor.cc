@@ -62,15 +62,26 @@ BasicBlock GetBlock(std::ifstream &stream) {
     }
 
     stream.read((char *) &size, 8);
+
+    
+    /**
+     *  Bug Start
+     */
+    //TODO Memory error after sequential runs
     char content[size.getValue()];
+    /**
+     *  Bug End
+     */
+
+
+
     stream.read(content, size.getValue());
     /**
      * Maybe size.getValue() converted to signed could be negative.
      */
-    BasicBlock block{
-            CAFF::Utils::getBlockType(id),
-            size
-    };
+    BasicBlock block;
+    block.blockType = CAFF::Utils::getBlockType(id);
+    block.contentSize = size;
 
     block.setData((uint8_t *) content);
 
@@ -96,25 +107,31 @@ namespace CAFF {
         bool isValid;
         uint64_t numAnim;
         try {
-            auto block = GetBlock(fileStream);
+            auto header = GetBlock(fileStream);
 
-            isValid = ValidateHeader((uint8_t *) block.data, block.contentSize.getValue(), &numAnim);
+            isValid = ValidateHeader((uint8_t *) header.data, header.contentSize.getValue(), &numAnim);
 
             if (!isValid)
                 return isValid;
 
             while (fileStream.good()) {
-                auto block = GetBlock(fileStream);
+                BasicBlock block = GetBlock(fileStream);
 
                 switch (block.blockType) {
                     case Utils::Credits:
                         isValid = ValidateCredits((uint8_t *) block.data, block.contentSize.getValue());
+                        if (isValid) {
+                            ProcessCredit(block.data);
+                        }
                         break;
                     case Utils::Animation:
                         if (numAnim == 0)
                             return false;
 
                         isValid = ValidateAnimation((uint8_t *) block.data, block.contentSize.getValue());
+                        if (isValid) {
+                            ProcessTags(block.data);
+                        }
                         --numAnim;
                         break;
                     default:
@@ -152,14 +169,15 @@ namespace CAFF {
         while (ifs.good()) {
             ifs.read(&ID, 1);
             int id = (int) ID;
-            ifs.read((char*)&length, 8);
+            ifs.read((char *) &length, 8);
             char data[length];
             ifs.read(data, length);
-            auto block=BasicBlock{
-                    CAFF::Utils::getBlockType(id),
-                    length,
-                    (uint8_t *) data
-            };
+            BasicBlock block;
+
+            block.blockType = Utils::getBlockType(id);
+            block.contentSize = NativeComponent::Types::INT64(length);
+            block.setData((uint8_t *) data);
+
             if (block.blockType == Utils::Animation) {
                 CIFF::CIFFProcessor proc;
                 unsigned long long durationSize = 8;
@@ -167,12 +185,15 @@ namespace CAFF {
                 unsigned long long contentLength = ciffSize.getValue() - durationSize;
                 auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
                 GetData(reinterpret_cast<uint8_t *>(data), durationSize, contentLength, ciff);
-                auto header = proc.ProcessHeader((uint8_t*)ciff);
+                auto header = proc.ProcessHeader((uint8_t *) ciff);
 
                 this->metadata.height = header->height;
                 this->metadata.width = header->width;
 
-                pixels = proc.GetImage((uint8_t*)ciff, header);
+                pixels = proc.GetImage((uint8_t *) ciff, header);
+
+                delete[] ciff;
+
                 return pixels;
                 /**
                  * Could find non-0 length contentSize...

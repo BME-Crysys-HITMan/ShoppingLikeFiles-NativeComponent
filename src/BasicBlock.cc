@@ -26,7 +26,9 @@
 #include "BasicBlock.h"
 
 BasicBlock::~BasicBlock() {
-    //delete[] data;
+    if (data != nullptr) {
+        //delete[] data;
+    }
 }
 
 void BasicBlock::setData(const unsigned char *data) {

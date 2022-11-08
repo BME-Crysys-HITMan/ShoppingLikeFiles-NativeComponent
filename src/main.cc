@@ -26,17 +26,21 @@
 
 #include "CAFF_Processor.h"
 #include <string>
-#include <algorithm>
-#include <cstring>
 
 int main(int argv, char **argc) {
     std::string fileName(
-            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\testfiles\1.caff)");
+            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\error_cases\3.caff)");
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();
 
     std::cerr << isValid << std::endl;
+
+    auto x = proc.GenerateThumbnailImage();
+
+    std::cout << "Finished processing" << std::endl;
+
+    delete[] x;
 
     return 0;
 }

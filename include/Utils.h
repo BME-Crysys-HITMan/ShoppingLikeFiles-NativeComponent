@@ -32,6 +32,7 @@
 #include <cstdint>
 #include <iostream>
 #include <vector>
+#include <cstring>
 
 namespace NativeComponent::Utils {
     bool isLittleEndian();
@@ -99,6 +100,8 @@ namespace NativeComponent::Types {
 }
 
 template<typename T>
-void GetData(uint8_t *data, uint64_t start, uint64_t length, T *result);
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, T *result) {
+    mempcpy((char *) result, &data[start], length);
+}
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H
