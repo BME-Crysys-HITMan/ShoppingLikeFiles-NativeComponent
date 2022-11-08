@@ -56,9 +56,19 @@ size_t CgetTagsLength(size_t headerSize, std::size_t captionLength) {
 std::vector<std::string> CgetTags(uint8_t *data, uint64_t start, uint64_t len) {
     std::vector<std::string> ret;
     char array[len];
+    int length = 0;
+    char c;
     uint8_t *ptr = data + start;
     for (int i = 0; i < len; ++i) {
-
+        c = (char)*ptr;
+        array[length] = c;
+        length++;
+        if(c=='\0'){
+            ret.push_back(std::string(array, length));
+            length = 0;
+            array[0] = '\0';
+        }
+        ++ptr;
     }
     return ret;
 }
