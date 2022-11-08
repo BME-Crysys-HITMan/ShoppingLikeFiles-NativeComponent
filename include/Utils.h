@@ -83,7 +83,7 @@ namespace NativeComponent::Types {
 
         INT64(unsigned long long initial);
 
-        INT64(const char arr[]);
+        INT64(char arr[]);
 
         unsigned long long getValue();
 

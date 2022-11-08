@@ -43,6 +43,9 @@
 #define CREATOR_LENGTH_OFFSET 6
 #define CREATOR_OFFSET 14
 
+#define ANIMATION_DURATION_OFFSET 0
+#define ANIMATION_CIFF_OFFSET 8
+
 class fileEndReached : public std::exception {
 public:
     const char *what() const noexcept override {
@@ -187,7 +190,11 @@ namespace CAFF {
     }
 
     void CAFFProcessor::ProcessTags(uint8_t *data) {
+        auto header = CIFF::CIFFProcessor::ProcessHeader(data + ANIMATION_CIFF_OFFSET);
 
+        this->tags.insert(header->tags.begin(), header->tags.end());
+
+        delete header;
     }
 
 

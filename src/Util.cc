@@ -178,7 +178,10 @@ NativeComponent::Types::INT64::INT64(unsigned long long int initial) : TypeBase(
     this->Set(initial);
 }
 
-NativeComponent::Types::INT64::INT64(const char arr[]) : TypeBase() {
-    auto value = std::bit_cast<uint64_t>(arr);
+NativeComponent::Types::INT64::INT64(char arr[]) : TypeBase() {
+    uint64_t value;
+
+    std::memcpy(&value, arr, sizeof(uint64_t));
+
     this->Set(value);
 }

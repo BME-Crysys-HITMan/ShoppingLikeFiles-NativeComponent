@@ -34,7 +34,7 @@
 #define HEIGHT_OFFSET 28
 #define CAPTION_OFFSET 36
 
-std::string getCaption(uint8_t *data, std::size_t start) {
+std::string CgetCaption(uint8_t *data, std::size_t start) {
     std::vector<char> vec;
     uint8_t *p = data + start;
     while (*p != '\n') {
@@ -47,31 +47,35 @@ std::string getCaption(uint8_t *data, std::size_t start) {
     return s;
 }
 
-size_t getTagsLength(size_t headerSize, std::size_t captionLength) {
+size_t CgetTagsLength(size_t headerSize, std::size_t captionLength) {
     size_t magicLength = 4;
     size_t headerConstantLength = 32;
     return headerSize - magicLength - headerConstantLength - captionLength;
 }
 
-std::vector<std::string> getTags(uint8_t *data, uint64_t start, uint64_t len) {
+std::vector<std::string> CgetTags(uint8_t *data, uint64_t start, uint64_t len) {
     std::vector<std::string> ret;
     char array[len];
     uint8_t *ptr = data + start;
     for (int i = 0; i < len; ++i) {
 
     }
+    return ret;
 }
 
 
 CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
-    Header *header = new Header();
+    auto header = new Header();
 
     GetData(data, HEADER_SIZE_OFFSET, 8, &header->headerSize);
     GetData(data, CONTENT_SIZE_OFFSET, 8, &header->contentSize);
-    GetData(data, HEADER_SIZE_OFFSET, 8, &header->width);
-    GetData(data, HEADER_SIZE_OFFSET, 8, &header->height);
-    header->caption = getCaption(data, CAPTION_OFFSET);
+    GetData(data, WIDTH_OFFSET, 8, &header->width);
+    GetData(data, HEIGHT_OFFSET, 8, &header->height);
+    header->caption = CgetCaption(data, CAPTION_OFFSET);
+    auto captionLen = header->caption.length() + 1;
+    uint64_t tagsStart = CAPTION_OFFSET + captionLen;
 
+    header->tags = CgetTags(data, tagsStart, CgetTagsLength(header->headerSize, captionLen));
 
     return header;
 }

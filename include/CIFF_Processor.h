@@ -66,15 +66,13 @@ namespace CIFF {
 
     class CIFFProcessor {
     private:
-        //Must be 'CIFF'
-        char headerMagic[4];
     public:
-        Header *ProcessHeader(uint8_t *data);
+        static Header *ProcessHeader(uint8_t *data);
 
-        Pixel *GetImage(uint8_t *data, Header *header);
+        static Pixel *GetImage(uint8_t *data, Header *header);
 
         //CIFF_Validation.h
-        bool IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize);
+        static bool IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize);
     };
 }
 
