@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 #include "CIFF_validation.h"
-#include <algorithm>
 
 class CIFF_Validation : public ::testing::Test {
 protected:

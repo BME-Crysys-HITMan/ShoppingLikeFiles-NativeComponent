@@ -26,9 +26,6 @@
 // Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
 //
 
-#include <sstream>
-#include <cstring>
-#include <algorithm>
 #include "CIFF_validation.h"
 
 /**
@@ -88,50 +85,6 @@ bool validateTags(char *tags, std::size_t length) {
 }
 
 /**
- * Finds the size of the caption field based on the following requirement:
- *
- * 1) Variable length ASCII encoded string ending with '\\n'.
- * 2) As '\\n' is a special character for the file format, the caption cannot contain this character.
- *
- * @param caption
- * @return
- */
-std::string getCaption(uint8_t *data, std::size_t start, std::size_t header_size) {
-    std::vector<char> vec;
-    uint8_t *p = data + start;
-    size_t counter = 0;
-    while (*p != '\n' || counter++ < (header_size - 36)) {
-        auto c = (char) *p++;
-        vec.push_back(c);
-    }
-    vec.push_back('\0');
-    vec.shrink_to_fit();
-    std::string s(vec.data());
-    return s;
-}
-
-/**
- *
- * Calculates the length of tags field based on the following specification:\n\n
- *
- * 1) Header size is the size of the header (all fields included)\n
- * 2) Size constants make up 4*8 bytes => 32 bytes (256 bits)\n
- * 3) Magic string make up 4 bytes (32 bits)\n
- * 4) Caption is variable length ASCII string\n
- * 5) The rest is made up of tags field
- *
- * @param headerSize Size of the header block.
- * @param captionLength Length of caption field.
- * @return Size of tags field.
- */
-size_t getTagsLength(size_t headerSize, std::size_t captionLength) {
-    size_t magicLength = 4;
-    size_t headerConstantLength = 32;
-    return headerSize - magicLength - headerConstantLength - captionLength;
-}
-
-
-/**
  *
  * Validates the headerSize based on a sum.
  *
@@ -171,8 +124,9 @@ bool validateHeader(uint8_t *data) {
     if (!validateContentSize(content_size, width, height))
         return false;
 
-    auto caption = getCaption(data, 32, header_size);
-
+    auto caption = getCaption(data, 32, abs(content_size-header_size));
+    if(caption.back()!='\n')
+        return false;
     size_t captionLength = caption.length() + 1;
 
     size_t tagsLength = getTagsLength(header_size, captionLength);

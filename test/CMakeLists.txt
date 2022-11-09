@@ -18,11 +18,12 @@ add_library(TestLib
         ../src/CAFF_validation.cc
         ../src/CIFF_validation.cc
         ../src/BasicBlock.cc
-        ../src/Util.cc)
+        ../src/Util.cc
+        ../src/CIFF_Utils.cc)
 
 add_executable(
         hello_test
-        hello_test.cpp calculator_unittest.cc CIFF_unittest.cc ../src/CIFF_Processor.cc ../src/BasicBlock.cc CIFF_Validation_Test.cc)
+        hello_test.cpp calculator_unittest.cc CIFF_unittest.cc ../src/CIFF_Processor.cc ../src/BasicBlock.cc ../src/CIFF_Utils.cc CIFF_Validation_Test.cc CIFF_Processor_Test.cc)
 
 target_include_directories(hello_test PRIVATE ../include)
 target_include_directories(TestLib PRIVATE ../include)
