@@ -82,7 +82,8 @@ std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComp
 void NativeComponent::Types::INT16::setValue(char *arr, std::size_t len) {
     if (len == 2) {
         char d[2] = {arr[0], arr[1]};
-        auto data = std::bit_cast<uint16_t>(d);
+        uint16_t data;
+        memcpy(&data, d, sizeof(uint16_t));
         this->Set(data);
     }
 }
