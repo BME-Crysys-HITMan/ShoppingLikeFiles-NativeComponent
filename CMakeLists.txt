@@ -21,6 +21,7 @@ add_library(ShoppingLikeFiles_NativeComponent SHARED
         src/CAFF_validation.cc
         src/CIFF_validation.cc
         src/Util.cc
+        src/CIFF_Utils.cc
         src/CIFF_Processor.cc
         src/BasicBlock.cc)
 

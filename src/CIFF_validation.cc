@@ -27,6 +27,7 @@
 //
 
 #include "CIFF_validation.h"
+#include "CIFF_Utils.h"
 
 /**
  * Pixel values in RGB.
@@ -123,9 +124,9 @@ bool validateHeader(uint8_t *data) {
 
     if (!validateContentSize(content_size, width, height))
         return false;
-    auto maxCaptionSize= content_size > header_size ? content_size-header_size : header_size-content_size;
+    auto maxCaptionSize = content_size > header_size ? content_size - header_size : header_size - content_size;
     auto caption = getCaption(data, 32, maxCaptionSize);
-    if(caption.back()!='\n')
+    if (caption.back() != '\n')
         return false;
     size_t captionLength = caption.length();
 
@@ -135,7 +136,7 @@ bool validateHeader(uint8_t *data) {
         return false;
     }
 
-    if((width==0 || height==0) && content_size!=0)
+    if ((width == 0 || height == 0) && content_size != 0)
         return false;
 
     if (tagsLength == 0)

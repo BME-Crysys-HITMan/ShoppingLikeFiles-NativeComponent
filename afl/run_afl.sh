@@ -73,6 +73,6 @@ make --directory=$BLD
 
 #rm -r "/test/output/*"
 
-#afl-fuzz -i /test/inputs -o /test/output -D -- "$BLD"/afl_test @@
+afl-fuzz -i /test/inputs -o /test/output -D -- "$BLD"/afl_test @@
 
-"$BLD"/afl_test /test/inputs/1.caff
+#"$BLD"/afl_test /test/inputs/1.caff

@@ -25,15 +25,22 @@
 
 #include "BasicBlock.h"
 
-BasicBlock::~BasicBlock() {
-    if (data != nullptr) {
-        //delete[] data;
+void BasicBlock::setData(const char *data) {
+    this->data = std::make_unique<unsigned char[]>(this->contentSize.getValue());
+    for (std::size_t i = 0; i < this->contentSize.getValue(); ++i) {
+        this->data[i] = static_cast<unsigned char>(data[i]);
     }
 }
 
-void BasicBlock::setData(const unsigned char *data) {
-    this->data = new unsigned char[this->contentSize.getValue()];
-    for (std::size_t i = 0; i < this->contentSize.getValue(); ++i) {
-        this->data[i] = data[i];
-    }
+void BasicBlock::setData(std::unique_ptr<unsigned char[]> ptr) {
+    this->data = std::move(ptr);
+}
+
+BasicBlock::BasicBlock(std::unique_ptr<unsigned char[]> ptr) {
+    this->data = std::move(ptr);
+}
+
+BasicBlock::BasicBlock(const char *data, uint64_t size) {
+    this->contentSize = NativeComponent::Types::INT64(size);
+    this->setData(data);
 }

@@ -31,13 +31,15 @@
 struct BasicBlock {
     CAFF::Utils::CAFF_Block_Type blockType;
     NativeComponent::Types::INT64 contentSize;
-    unsigned char *data;
+    std::unique_ptr<unsigned char[]> data;
 
-    void setData(const unsigned char *data);
+    void setData(const char *data);
 
-    BasicBlock() : data(nullptr), blockType(CAFF::Utils::CAFF_Block_Type::Unknown), contentSize() {};
+    void setData(std::unique_ptr<unsigned char[]>);
 
-    ~BasicBlock();
+    BasicBlock(std::unique_ptr<unsigned char[]> ptr);
+
+    BasicBlock(const char *data, uint64_t size);
 };
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
