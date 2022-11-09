@@ -85,3 +85,8 @@ TEST_F(CIFF_Process, IsValidInvalidHeadeTest) {
 TEST_F(CIFF_Process, IsValidInvalidciffSizeTest) {
     ASSERT_FALSE(proc.IsValid(data, ciffSize));
 }
+
+TEST_F(CIFF_Process, IsValidWidthZeroContetnSizeNot) {
+    data[20]=0;
+    ASSERT_FALSE(proc.IsValid(data, ciffSize));
+}
