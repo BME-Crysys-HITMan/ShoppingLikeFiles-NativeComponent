@@ -29,7 +29,7 @@
 
 int main(int argv, char **argc) {
     std::string fileName(
-            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\error_cases\crash_1.caff)");
+            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\testfiles\1.caff)");
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();

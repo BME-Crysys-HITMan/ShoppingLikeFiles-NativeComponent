@@ -234,11 +234,12 @@ namespace CAFF {
         int64_t creator_len;
         GetData(data, CREATOR_LENGTH_OFFSET, creator_lenSize, &creator_len);
 
-        char creator[creator_len + 1];
+        char *creator = new char[creator_len + 1];
         GetData(data, CREATOR_OFFSET, creator_len, creator);
 
         creator[creator_len] = '\0';
-        this->metadata.creator = std::string(creator);
+
+        this->metadata.creator = creator;
     }
 
     void CAFFProcessor::ProcessTags(uint8_t *data) {

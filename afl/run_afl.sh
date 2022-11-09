@@ -60,7 +60,7 @@ then
 fi
 
 #export AFL_USE_ASAN=1
-#export AFL_USE_MSAN=0
+#export AFL_USE_MSAN=1
 export AFL_USE_UBSAN=1
 
 echo 'Running command cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ ..'
@@ -71,8 +71,8 @@ cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ -S $
 
 make --directory=$BLD
 
-rm -r "/test/output/*"
+#rm -r "/test/output/*"
 
-afl-fuzz -i /test/inputs -o /test/output -D -- "$BLD"/afl_test @@
+#afl-fuzz -i /test/inputs -o /test/output -D -- "$BLD"/afl_test @@
 
-#"$BLD"/afl_test /test/inputs/1.caff
+"$BLD"/afl_test /test/inputs/1.caff

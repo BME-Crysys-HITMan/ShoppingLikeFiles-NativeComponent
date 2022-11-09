@@ -52,7 +52,7 @@ void printArgs(int argc, char **argv) {
 }
 
 int main(int argc, char **argv) {
-    printArgs(argc, argv);
+    //printArgs(argc, argv);
 
     if (argc < 2) {
         std::cout << "Usage: application /path/to/file" << std::endl;
