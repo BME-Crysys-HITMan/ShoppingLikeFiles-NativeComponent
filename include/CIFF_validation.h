@@ -30,6 +30,7 @@
 #define SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H
 
 #include "Utils.h"
+#include "CIFF_Utils.h"
 
 /**
  * Validates a CIFF header based on raw data.

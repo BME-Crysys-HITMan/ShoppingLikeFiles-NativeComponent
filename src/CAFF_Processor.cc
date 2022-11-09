@@ -91,7 +91,7 @@ namespace CAFF {
              * Bugfix end
              */
             fileStream.read(&ID, 1);
-            int id = (int) ID;
+            auto id = (int) ID;
             if (firstBlock) {
                 if (ID != 1) {
                     this->isValidFile = false;
@@ -147,7 +147,7 @@ namespace CAFF {
                     valid = ValidateHeader((uint8_t *) data, length, &num_anim);
                     break;
                 case Utils::Credits:
-                    valid = ValidateCredits((uint8_t *) data, length);
+                    valid = ValidateCredits((const unsigned char *) (data), length);
                     break;
                 case Utils::Animation:
                     if (num_anim == 0) {
