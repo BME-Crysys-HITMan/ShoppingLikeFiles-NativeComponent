@@ -187,6 +187,9 @@ bool validateHeader(uint8_t *data) {
         return false;
     }
 
+    if((width==0 || height==0) && content_size!=0)
+        return false;
+
     if (tagsLength == 0)
         return true;
 
