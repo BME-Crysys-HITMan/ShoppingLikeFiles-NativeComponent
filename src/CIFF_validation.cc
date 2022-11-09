@@ -127,7 +127,7 @@ bool validateHeader(uint8_t *data) {
     auto caption = getCaption(data, 32, abs(content_size-header_size));
     if(caption.back()!='\n')
         return false;
-    size_t captionLength = caption.length() + 1;
+    size_t captionLength = caption.length();
 
     size_t tagsLength = getTagsLength(header_size, captionLength);
 
