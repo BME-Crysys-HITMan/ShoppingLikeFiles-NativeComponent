@@ -19,7 +19,7 @@ TEST(CIFF_UTILS_SUITE, getTagsLength) {
 
 TEST(CIFF_UTILS_SUITE, getTagsTest) {
     const char *c = "RandomText\0ab";
-    std::vector vec = getTags((uint8_t *) c, 0, 20);
+    std::vector vec = getTags((uint8_t *) c, 0, 14);
     std::vector<std::string> expected = {"RandomText", "ab"};
     ASSERT_EQ(vec, expected);
 }
