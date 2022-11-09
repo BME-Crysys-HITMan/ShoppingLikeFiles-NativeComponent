@@ -46,48 +46,6 @@
 #define ANIMATION_DURATION_OFFSET 0
 #define ANIMATION_CIFF_OFFSET 8
 
-class fileEndReached : public std::exception {
-public:
-    const char *what() const noexcept override {
-        return "File end reached";
-    }
-};
-
-BasicBlock GetBlock(std::ifstream &stream) {
-    char id;
-    NativeComponent::Types::INT64 size;
-    if (!(stream >> id)) {
-        std::cout << "End reached!" << std::endl;
-        throw fileEndReached();
-    }
-
-    stream.read((char *) &size, 8);
-
-    
-    /**
-     *  Bug Start
-     */
-    //TODO Memory error after sequential runs
-    char content[size.getValue()];
-    /**
-     *  Bug End
-     */
-
-
-
-    stream.read(content, size.getValue());
-    /**
-     * Maybe size.getValue() converted to signed could be negative.
-     */
-    BasicBlock block;
-    block.blockType = CAFF::Utils::getBlockType(id);
-    block.contentSize = size;
-
-    block.setData((uint8_t *) content);
-
-    return block;
-}
-
 namespace CAFF {
     CAFFProcessor::~CAFFProcessor() {
         //delete[] fileName;
@@ -102,22 +60,69 @@ namespace CAFF {
         fileStream.open(this->fileName, std::ifstream::binary);
 
         if (!fileStream) {
+            this->isValidFile = false;
             return false;
         }
-        bool firstBlock=true;
+
+        /**
+         * Bugfix for AFL run 2 based errors
+         */
+        uint64_t fileSize;
+        fileStream.seekg(0, fileStream.end);
+        fileSize = fileStream.tellg();
+        fileStream.seekg(0, fileStream.beg);
+        /**
+         * End of bugfix
+         */
+
+        bool firstBlock = true;
         char ID;
+
         int64_t length;
         uint64_t num_anim;
-        while (fileStream.good()) {
+
+
+        /**
+         * Bugfix after RUN 3
+         */
+        uint64_t alreadyRed = 0;
+        while (fileStream.good() && fileSize > alreadyRed) {
+            /**
+             * Bugfix end
+             */
             fileStream.read(&ID, 1);
             int id = (int) ID;
-            if(firstBlock){
-                if(ID!=1)
+            if (firstBlock) {
+                if (ID != 1) {
+                    this->isValidFile = false;
                     return false;
-                else
-                    firstBlock=false;
+                } else
+                    firstBlock = false;
             }
-            fileStream.read((char*)&length, 8);
+            fileStream.read((char *) &length, 8);
+
+            /**
+             * Bugfix for AFL run 2 based errors
+             */
+            if (fileSize - fileStream.tellg() < length) {
+                this->isValidFile = false;
+                return false;
+            }
+            /**
+             * End bugfix
+             */
+
+            /**
+             * Bugfix for Run 4
+             */
+            if (length < 1) {
+                this->isValidFile = false;
+                return false;
+            }
+            /**
+             * End bugfix
+             */
+
             char data[length];
             fileStream.read(data, length);
             BasicBlock block;
@@ -125,24 +130,46 @@ namespace CAFF {
             block.blockType = Utils::getBlockType(id);
             block.contentSize = NativeComponent::Types::INT64(length);
             block.setData((uint8_t *) data);
+
+            /**
+             * Bugfix for RUN 3
+             */
+            alreadyRed = fileStream.tellg();
+            /**
+             * Bugfix end
+             */
+
+
+            bool valid = false;
+
             switch (block.blockType) {
                 case Utils::Header:
-                    if(!ValidateHeader((uint8_t *) data, length, &num_anim))
-                        return false;
+                    valid = ValidateHeader((uint8_t *) data, length, &num_anim);
                     break;
                 case Utils::Credits:
-                    if(!ValidateCredits((uint8_t *) data, length))
-                        return false;
+                    valid = ValidateCredits((uint8_t *) data, length);
                     break;
                 case Utils::Animation:
-                    if (num_anim == 0)
-                        return false;
-                    if(!ValidateAnimation((uint8_t *) data, length))
-                        return false;
+                    if (num_anim == 0) {
+                        valid = false;
+                        break;
+                    }
+                    valid = ValidateAnimation((uint8_t *) data, length);
                     --num_anim;
                     break;
                 case Utils::Unknown:
-                    return false;
+                    valid = false;
+            }
+            this->isValidFile = valid;
+
+            if (!valid) {
+                return valid;
+            }
+
+            if (block.blockType == Utils::Credits) {
+                ProcessCredit(block.data);
+            } else if (block.blockType == Utils::Animation) {
+                ProcessTags(block.data);
             }
         }
         return true;
@@ -150,6 +177,11 @@ namespace CAFF {
 
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
         CIFF::Pixel *pixels = nullptr;
+
+        if (!this->isValidFile) {
+            return pixels;
+        }
+
         std::ifstream ifs(this->fileName, std::ifstream::binary);
 
         char ID;

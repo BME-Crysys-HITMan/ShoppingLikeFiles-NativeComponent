@@ -104,6 +104,9 @@ bool ValidateCredits(uint8_t *data, std::size_t length) {
 }
 
 bool ValidateAnimation(uint8_t *data, std::size_t length) {
+    if (length < 8) {
+        return false;
+    }
     unsigned long long durationSize = 8;
     int64_t duration;
     GetData(data, 0, durationSize, &duration);

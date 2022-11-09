@@ -27,3 +27,27 @@
 //
 
 #include "DLLPublicInterface.h"
+
+CAFF::CAFFProcessor *CreateCaffProcessor(std::string fileName) {
+    return new CAFF::CAFFProcessor(fileName.c_str());
+}
+
+void DeleteCaffProcessor(CAFF::CAFFProcessor *proc) {
+    delete proc;
+}
+
+bool ValidateFile(CAFF::CAFFProcessor *proc) {
+    return proc->ValidateFile();
+}
+
+CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc) {
+    return proc->GenerateThumbnailImage();
+}
+
+CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc) {
+    return proc->GetCredits();
+}
+
+void GetTags(CAFF::CAFFProcessor *proc) {
+
+}

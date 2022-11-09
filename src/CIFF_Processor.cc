@@ -60,10 +60,10 @@ std::vector<std::string> CgetTags(uint8_t *data, uint64_t start, uint64_t len) {
     char c;
     uint8_t *ptr = data + start;
     for (int i = 0; i < len; ++i) {
-        c = (char)*ptr;
+        c = (char) *ptr;
         array[length] = c;
         length++;
-        if(c=='\0'){
+        if (c == '\0') {
             ret.push_back(std::string(array, length));
             length = 0;
             array[0] = '\0';
@@ -90,21 +90,24 @@ CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
 }
 
 CIFF::Pixel *CIFF::CIFFProcessor::GetImage(uint8_t *data, CIFF::Header *header) {
-        auto *result = new CIFF::Pixel[sizeof(CIFF::Pixel) * (header->contentSize/3)];
-        int offset=header->headerSize;
-        for (int i = 0; i < header->contentSize/3; i+=3) {
-            int index=i+offset;
-            result[i/3]=CIFF::Pixel{
-                    data[index],
-                    data[index+1],
-                    data[index+2]
-            };
-        }
-        return result;
+    auto *result = new CIFF::Pixel[sizeof(CIFF::Pixel) * (header->contentSize / 3)];
+    int offset = header->headerSize;
+    for (int i = 0; i < header->contentSize / 3; i += 3) {
+        int index = i + offset;
+        result[i / 3] = CIFF::Pixel{
+                data[index],
+                data[index + 1],
+                data[index + 2]
+        };
+    }
+    return result;
 }
 
 
 bool CIFF::CIFFProcessor::IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize) {
+    if (ciffSize.getValue() < 36) {
+        return false;
+    }
     bool isValid = validateHeader(data);
     if (!isValid)
         return isValid;
@@ -112,6 +115,5 @@ bool CIFF::CIFFProcessor::IsValid(uint8_t *data, NativeComponent::Types::INT64 c
     auto length = ciffSize.getValue() - DURATION_LENGTH;
 
     isValid = validateContent(data, length);
-
     return isValid;
 }

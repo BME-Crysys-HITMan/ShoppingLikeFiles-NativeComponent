@@ -60,22 +60,12 @@ int main(int argc, char **argv) {
     }
 
     CAFF::CAFFProcessor processor(argv[1]);
-
     auto isValid = processor.ValidateFile();
-
     CIFF::Pixel *pixels = nullptr;
-    std::string valid("Input is valid");
-    std::string invalid("Input is not valid");
+    pixels = processor.GenerateThumbnailImage();
 
-    if (isValid) {
-        pixels = processor.GenerateThumbnailImage();
-
-        std::cout << valid << std::endl;
-    } else {
-        std::cout << invalid << std::endl;
-    }
-
-    delete[] pixels;
+    if (pixels != nullptr)
+        delete[] pixels;
 
     return 0;
 }

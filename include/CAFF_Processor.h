@@ -46,6 +46,7 @@ namespace CAFF {
     class CAFFProcessor {
     private:
         const char *fileName;
+        bool isValidFile = false;
         Credit metadata;
         std::set<std::string> tags;
 

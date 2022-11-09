@@ -22,9 +22,14 @@ message("Flags: ${CMAKE_CXX_FLAGS}")
 
 add_library(ShoppingLikeFiles_NativeComponent SHARED
         include/DLLPublicInterface.h
+        include/Utils.h
         src/DLLPublicInterface.cc
         src/CAFF_Processor.cc
-        src/Util.cc src/CIFF_Processor.cc src/BasicBlock.cc)
+        src/CAFF_validation.cc
+        src/CIFF_validation.cc
+        src/Util.cc
+        src/CIFF_Processor.cc
+        src/BasicBlock.cc)
 
 add_executable(Debug
         src/DLLPublicInterface.cc

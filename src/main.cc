@@ -29,7 +29,7 @@
 
 int main(int argv, char **argc) {
     std::string fileName(
-            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\error_cases\3.caff)");
+            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\error_cases\crash_1.caff)");
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();
@@ -40,7 +40,8 @@ int main(int argv, char **argc) {
 
     std::cout << "Finished processing" << std::endl;
 
-    delete[] x;
+    if (x != nullptr)
+        delete[] x;
 
     return 0;
 }

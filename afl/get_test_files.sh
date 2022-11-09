@@ -1,5 +1,6 @@
-#!/bin/sh
-#
+#!/usr/bin/env bash
+
+
 #
 # MIT License
 #
@@ -23,56 +24,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-# Example run ./run_afl.sh /build/slf /code/afl
 
-echo "AFL runner utility for HITman team afl testing by Daniel Abraham"
+echo "Test file compactor utility for HITman team"
 echo
 
 if [ "$#" -lt "2" ]; then
-  echo "Usage: $0 /path/to/build_dir /path/to/src_dir [... target params...]"
+  echo "Usage: $0 /path/to/test_files /path/to/src_dir [... target params...]"
   echo
-  echo "Example run ./run_afl.sh /build/slf /code/afl"
+  echo "Example run ./get_test_files.sh /test/output/default /code/afl/error_cases"
   echo
   exit 1
 fi
 
-SRC="$2"
-BLD="$1"
+SRC="$1"
+DST="$2"
 shift
 shift
 
-if [ ! -d "$SRC" -o ! -f "$SRC/CMakeLists.txt" ]
-then
-  echo "[-] Error: source not found or not contains CMakeList"
-  exit 1
-fi
+i=0
 
-if [ -d "$BLD" ]
-then
-  echo "Cleaning build dir"
-  rm -r "$BLD"/*
-fi
+for entry in "$SRC"/crashes/*
+do
+  echo "$entry"
+  # shellcheck disable=SC2016
+  #echo cp "$entry" "$DST/crash_$i.caff"
+  cp "$entry" "$DST/crash_$i.caff"
+  let "i++"
+done
 
-if [ ! -d "$BLD" ]
-then
-  echo "Creating build dir at $BLD"
-  mkdir "$BLD"
-fi
+i=1
 
-#export AFL_USE_ASAN=1
-#export AFL_USE_MSAN=0
-export AFL_USE_UBSAN=1
+for entry in "$SRC"/hangs/*
+do
+  echo "$entry"
+  echo cp "$entry" "$DST/crash_$i.caff"
+  cp "$entry" "$DST/hang_$i.caff"
+  let "i++"
+done
 
-echo 'Running command cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ ..'
-
-cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ -S $SRC -B $BLD
-
-# cmake -DCMAKE_C_COMPILER=afl-clang-lto -DCMAKE_CXX_COMPILER=afl-clang-lto++ -S . -B ./build
-
-make --directory=$BLD
-
-rm -r "/test/output/*"
-
-afl-fuzz -i /test/inputs -o /test/output -D -- "$BLD"/afl_test @@
-
-#"$BLD"/afl_test /test/inputs/1.caff
