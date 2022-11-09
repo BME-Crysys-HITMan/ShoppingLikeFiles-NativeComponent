@@ -24,15 +24,13 @@ add_library(TestLib
 add_executable(
         hello_test
         Utils_unittest.cc
-        CIFF_unittest.cc 
-        ../src/CIFF_Processor.cc 
+        ../src/CIFF_Processor.cc
         ../src/BasicBlock.cc 
         ../src/CIFF_Utils.cc 
         CIFF_Validation_Test.cc 
         CIFF_Processor_Test.cc 
         CIFF_Utils_unittest.cc
-        CIFF_unittest.cc 
-        ../src/CIFF_Processor.cc 
+        ../src/CIFF_Processor.cc
         ../src/BasicBlock.cc 
         CAFF_validation_Test.cc 
         CAFF_Processor_Test.cc)
