@@ -114,10 +114,21 @@ TEST(CAFF_Validation, AssertCredits_Valid) {
 */
 TEST(CAFF_Validation, AssertCredits_Invalid) {
     auto vec = GetValidCredit();
-    vec.at(7) = 45;
+    vec.at(CREDITS::CREATOR_LEN_OFFSET + 3) = 45;
 
     bool valid = ValidateCredits(vec.data(), vec.size());
 
     ASSERT_FALSE(valid);
 }
 
+/**
+* Testcase: Invalid credits, Creator not only ASCII characters
+*/
+TEST(CAFF_Validation, AssertCredits_Invalid_NotASCII) {
+    auto vec = GetValidCredit();
+    vec.at(CREDITS::CREATOR_OFFSET + 4) = 200;
+
+    bool valid = ValidateCredits(vec.data(), vec.size());
+
+    ASSERT_FALSE(valid);
+}

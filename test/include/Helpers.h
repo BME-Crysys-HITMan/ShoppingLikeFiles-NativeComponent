@@ -33,6 +33,22 @@
 #include <vector>
 #include <cstring>
 
+namespace CREDITS {
+    const int YEAR_OFFSET = 0;
+    const int MONTH_OFFSET = 2;
+    const int DAY_OFFSET = 3;
+    const int HOUR_OFFSET = 4;
+    const int MINUTE_OFFSET = 5;
+    const int CREATOR_LEN_OFFSET = 6;
+    const int CREATOR_OFFSET = 14;
+}
+
+namespace HEADER {
+    const int MAGIC_OFFSET = 0;
+    const int LEN_OFFSET = 4;
+    const int ANIM_OFFSET = 12;
+}
+
 template<typename T>
 std::vector<uint8_t> ConvertToArray(T data) {
     std::size_t size = sizeof(T) / sizeof(uint8_t);
