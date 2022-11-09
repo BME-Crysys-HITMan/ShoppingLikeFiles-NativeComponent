@@ -1,8 +1,6 @@
-
 // MIT License
 //
-// Copyright (c) 2022.  - BME-Crysys-HITMan
-//
+// Copyright (c) 2022 BME-Crysys-HITMan
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -21,33 +19,21 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
 //
 
-#include "DLLPublicInterface.h"
+#include "BasicBlock.h"
 
-CAFF::CAFFProcessor *CreateCaffProcessor(std::string fileName) {
-    return new CAFF::CAFFProcessor(fileName.c_str());
+BasicBlock::~BasicBlock() {
+    if (data != nullptr) {
+        //delete[] data;
+    }
 }
 
-void DeleteCaffProcessor(CAFF::CAFFProcessor *proc) {
-    delete proc;
-}
-
-bool ValidateFile(CAFF::CAFFProcessor *proc) {
-    return proc->ValidateFile();
-}
-
-CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc) {
-    return proc->GenerateThumbnailImage();
-}
-
-CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc) {
-    return proc->GetCredits();
-}
-
-void GetTags(CAFF::CAFFProcessor *proc) {
-
+void BasicBlock::setData(const unsigned char *data) {
+    this->data = new unsigned char[this->contentSize.getValue()];
+    for (std::size_t i = 0; i < this->contentSize.getValue(); ++i) {
+        this->data[i] = data[i];
+    }
 }

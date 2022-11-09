@@ -1,8 +1,6 @@
-
 // MIT License
 //
-// Copyright (c) 2022.  - BME-Crysys-HITMan
-//
+// Copyright (c) 2022 BME-Crysys-HITMan
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -21,33 +19,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/5/2022.
 //
 
-#include "DLLPublicInterface.h"
+#ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
+#define SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
 
-CAFF::CAFFProcessor *CreateCaffProcessor(std::string fileName) {
-    return new CAFF::CAFFProcessor(fileName.c_str());
-}
+#include "Utils.h"
 
-void DeleteCaffProcessor(CAFF::CAFFProcessor *proc) {
-    delete proc;
-}
+struct BasicBlock {
+    CAFF::Utils::CAFF_Block_Type blockType;
+    NativeComponent::Types::INT64 contentSize;
+    unsigned char *data;
 
-bool ValidateFile(CAFF::CAFFProcessor *proc) {
-    return proc->ValidateFile();
-}
+    void setData(const unsigned char *data);
 
-CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc) {
-    return proc->GenerateThumbnailImage();
-}
+    BasicBlock() : data(nullptr), blockType(CAFF::Utils::CAFF_Block_Type::Unknown), contentSize() {};
 
-CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc) {
-    return proc->GetCredits();
-}
+    ~BasicBlock();
+};
 
-void GetTags(CAFF::CAFFProcessor *proc) {
-
-}
+#endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H

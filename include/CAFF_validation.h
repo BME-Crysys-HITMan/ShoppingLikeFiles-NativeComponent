@@ -36,7 +36,7 @@
  * @param data field of containing block
  * @return true, if header is valid
  */
-bool ValidateHeader(uint8_t *data, std::size_t length);
+bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *numAnim);
 
 /**
  * Validates a CAFF Credits block

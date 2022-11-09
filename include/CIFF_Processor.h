@@ -30,6 +30,7 @@
 #define SHOPPINGLIKEFILES_NATIVECOMPONENT_CIFF_PROCESSOR_H
 
 #include <string>
+#include "Utils.h"
 
 namespace CIFF {
     struct Header {
@@ -49,7 +50,7 @@ namespace CIFF {
         std::string caption;
 
         // Variable size each ending with \0
-        std::string *tags;
+        std::vector<std::string> tags;
     };
 
     struct Pixel {
@@ -65,19 +66,13 @@ namespace CIFF {
 
     class CIFFProcessor {
     private:
-        //Must be 'CIFF'
-        char headerMagic[4];
     public:
-        CIFFProcessor();
+        static Header *ProcessHeader(uint8_t *data);
 
-        ~CIFFProcessor();
-
-        Header *ProcessHeader(uint8_t *data);
-
-        Pixel *GetImage(uint8_t *data, Header *header);
+        static Pixel *GetImage(uint8_t *data, Header *header);
 
         //CIFF_Validation.h
-        bool IsValid(uint8_t *data);
+        static bool IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize);
     };
 }
 

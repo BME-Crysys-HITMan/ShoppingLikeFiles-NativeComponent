@@ -34,7 +34,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-CAFF::CAFFProcessor *CreateCaffProcessor();
+CAFF::CAFFProcessor *CreateCaffProcessor(std::string);
 void DeleteCaffProcessor(CAFF::CAFFProcessor *proc);
 
 bool ValidateFile(CAFF::CAFFProcessor *proc);

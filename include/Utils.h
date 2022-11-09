@@ -31,16 +31,16 @@
 
 #include <cstdint>
 #include <iostream>
+#include <vector>
+#include <cstring>
 
-namespace NativeComponent::Utils {
-    bool isLittleEndian();
-}
 
 namespace CAFF::Utils {
     enum CAFF_Block_Type {
         Header,
         Credits,
-        Animation
+        Animation,
+        Unknown
     };
 
     /**
@@ -67,23 +67,26 @@ namespace NativeComponent::Types {
         void Set(T data);
     };
 
-    class INT16 : TypeBase<unsigned short> {
+    class INT64 : public TypeBase<unsigned long long> {
     public:
-        friend std::istream &operator>>(std::istream &input, INT16 &obj);
+        INT64();
+
+        INT64(unsigned long long initial);
+
+        INT64(char arr[]);
+
+        unsigned long long getValue();
+
+        void FromArray(std::vector<char> vec);
 
     protected:
-        void setValue(unsigned char *arr, std::size_t len);
+        void setValue(char *arr, std::size_t len);
     };
+}
 
-    class INT64 : TypeBase<unsigned long long> {
-    public:
-        friend std::istream &operator>>(std::istream &input, INT64 &obj);
-
-        friend std::ostream &operator<<(std::ostream &output, const INT64 &obj);
-
-    protected:
-        void setValue(unsigned char *arr, std::size_t len);
-    };
+template<typename T>
+void GetData(unsigned char *data, unsigned long long start, unsigned long long length, T *result) {
+    mempcpy((char *) result, &data[start], length);
 }
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H

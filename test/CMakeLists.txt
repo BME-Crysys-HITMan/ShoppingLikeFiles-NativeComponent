@@ -11,11 +11,18 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_library(TestLib ../src/CAFF_Processor.cc ../src/DLLPublicInterface.cc)
+add_library(TestLib
+        ../src/DLLPublicInterface.cc
+        ../src/CAFF_Processor.cc
+        ../src/CIFF_Processor.cc
+        ../src/CAFF_validation.cc
+        ../src/CIFF_validation.cc
+        ../src/BasicBlock.cc
+        ../src/Util.cc)
 
 add_executable(
         hello_test
-        hello_test.cpp calculator_unittest.cc CIFF_unittest.cc)
+        hello_test.cpp calculator_unittest.cc CIFF_unittest.cc ../src/CIFF_Processor.cc ../src/BasicBlock.cc)
 
 target_include_directories(hello_test PRIVATE ../include)
 target_include_directories(TestLib PRIVATE ../include)

@@ -31,33 +31,28 @@
 
 #include <string>
 #include "CIFF_Processor.h"
-
+#include "Utils.h"
+#include <set>
 
 namespace CAFF {
+    namespace Types = NativeComponent::Types;
     struct Credit {
-        uint16_t year;
-        uint8_t month;
-        uint8_t day;
-        uint8_t hour;
-        uint8_t minute;
+        uint64_t width;
+        uint64_t height;
         //Creator
-        //CIFF tags *
-    };
-
-    struct Header {
-        char *magicString;
-        uint8_t headerSize;
-        uint8_t numAnim;
+        const char *creator;
     };
 
     class CAFFProcessor {
     private:
-        char *fileName;
-        bool isLittleEndian;
-        Header header;
+        const char *fileName;
+        bool isValidFile = false;
         Credit metadata;
+        std::set<std::string> tags;
 
-        CAFFProcessor();
+        void ProcessCredit(uint8_t *data);
+
+        void ProcessTags(uint8_t *data);
 
     public:
         explicit CAFFProcessor(const char *filename);
@@ -67,6 +62,8 @@ namespace CAFF {
         bool ValidateFile();
 
         CIFF::Pixel *GenerateThumbnailImage();
+
+        Credit GetCredits();
     };
 }
 

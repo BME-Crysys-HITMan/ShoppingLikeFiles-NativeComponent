@@ -28,14 +28,8 @@
 #include "Utils.h"
 #include <bit>
 #include <string>
-
-bool NativeComponent::Utils::isLittleEndian() {
-    if constexpr (std::endian::native == std::endian::little) {
-        return true;
-    } else {
-        return false;
-    }
-}
+#include <vector>
+#include <cstring>
 
 CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
     switch (id) {
@@ -49,7 +43,7 @@ CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
             return CAFF::Utils::CAFF_Block_Type::Animation;
         }
         default: {
-            throw std::exception();
+            return CAFF::Utils::CAFF_Block_Type::Unknown;
         }
     }
 }
@@ -66,52 +60,40 @@ void Type::TypeBase<T>::Set(T data) {
     value = data;
 }
 
+void NativeComponent::Types::INT64::setValue(char *arr, std::size_t len) {
+    if (len == 8) {
+        char d[8];
+        for (std::size_t i = 0; i < len; ++i) {
+            d[i] = arr[i];
+        }
 
-std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComponent::Types::INT16 &obj) {
-    uint8_t arr[2];
+        uint64_t data;
+        memcpy(&data, d, sizeof(uint64_t));
 
-    input >> arr;
-
-    obj.setValue(arr, 2);
-
-    return input;
-}
-
-void NativeComponent::Types::INT16::setValue(unsigned char *arr, std::size_t len) {
-    if (len == 2) {
-        uint16_t data = *reinterpret_cast<uint16_t *>(arr);
         this->Set(data);
     }
 }
 
-void NativeComponent::Types::INT64::setValue(unsigned char *arr, std::size_t len) {
-    bool little = Utils::isLittleEndian();
-    if (len == 8) {
-        if (little) {
-            uint64_t data = *reinterpret_cast<uint64_t *>(arr);
-            this->Set(data);
-        }
-    }
+void NativeComponent::Types::INT64::FromArray(std::vector<char> vec) {
+    this->setValue(vec.data(), vec.size());
 }
 
-std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComponent::Types::INT64 &obj) {
-    std::cout << "INT64 operator>>" << std::endl;
-    uint8_t arr[8];
-
-    input >> arr;
-
-    std::cout << "array content:" << std::endl;
-
-    auto print = [](const uint8_t &c) { std::cout << (int) (c) << std::endl; };
-
-    std::for_each(&arr[0], &arr[7], print);
-
-    obj.setValue(arr, 8);
-    return input;
+unsigned long long NativeComponent::Types::INT64::getValue() {
+    return TypeBase::getValue();
 }
 
-std::ostream &NativeComponent::Types::operator<<(std::ostream &output, const NativeComponent::Types::INT64 &obj) {
-    output << obj.value;
+NativeComponent::Types::INT64::INT64() : TypeBase() {
+    this->Set(0);
+}
 
-    return output;
+NativeComponent::Types::INT64::INT64(unsigned long long int initial) : TypeBase() {
+    this->Set(initial);
+}
+
+NativeComponent::Types::INT64::INT64(char arr[]) : TypeBase() {
+    uint64_t value;
+
+    std::memcpy(&value, arr, sizeof(uint64_t));
+
+    this->Set(value);
 }

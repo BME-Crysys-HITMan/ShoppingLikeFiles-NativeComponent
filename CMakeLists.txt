@@ -7,13 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 option(ci-run "Running tests in CI environment." OFF)
 
 if (ci-run)
-    #if (DEFINED ENV{LLVM_PATH})
-    #    set(clangRoute "$ENV{LLVM_PATH}/bin/clang++" CACHE INTERNAL "Copied from environment variable")
-    #    message("Clang path = ${clangRoute}")
-    #    set(CMAKE_CXX_COMPILER "${clangRoute}")
-    #else ()
-    #    set(CMAKE_CXX_COMPILER clang++)
-    #endif ()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-instr-generate -fcoverage-mapping -mllvm -runtime-counter-relocation -O0 -g")
 endif ()
 
@@ -22,11 +15,24 @@ message("Flags: ${CMAKE_CXX_FLAGS}")
 
 add_library(ShoppingLikeFiles_NativeComponent SHARED
         include/DLLPublicInterface.h
+        include/Utils.h
         src/DLLPublicInterface.cc
         src/CAFF_Processor.cc
-        src/Util.cc)
+        src/CAFF_validation.cc
+        src/CIFF_validation.cc
+        src/Util.cc
+        src/CIFF_Processor.cc
+        src/BasicBlock.cc)
+
+add_executable(Debug
+        src/DLLPublicInterface.cc
+        src/CAFF_Processor.cc
+        src/CAFF_validation.cc
+        src/CIFF_validation.cc
+        src/Util.cc src/main.cc src/CIFF_Processor.cc src/BasicBlock.cc)
 
 target_include_directories(ShoppingLikeFiles_NativeComponent PRIVATE include)
+target_include_directories(Debug PRIVATE include)
 
 enable_testing()
 add_subdirectory(test)

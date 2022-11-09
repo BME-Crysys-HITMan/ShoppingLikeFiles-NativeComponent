@@ -1,8 +1,6 @@
-
 // MIT License
 //
-// Copyright (c) 2022.  - BME-Crysys-HITMan
-//
+// Copyright (c) 2022 BME-Crysys-HITMan
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -21,33 +19,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
 //
 
-#include "DLLPublicInterface.h"
 
-CAFF::CAFFProcessor *CreateCaffProcessor(std::string fileName) {
-    return new CAFF::CAFFProcessor(fileName.c_str());
-}
+#include "CAFF_Processor.h"
+#include <string>
 
-void DeleteCaffProcessor(CAFF::CAFFProcessor *proc) {
-    delete proc;
-}
+int main(int argv, char **argc) {
+    std::string fileName(
+            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\testfiles\1.caff)");
+    CAFF::CAFFProcessor proc(fileName.c_str());
 
-bool ValidateFile(CAFF::CAFFProcessor *proc) {
-    return proc->ValidateFile();
-}
+    auto isValid = proc.ValidateFile();
 
-CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc) {
-    return proc->GenerateThumbnailImage();
-}
+    std::cerr << isValid << std::endl;
 
-CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc) {
-    return proc->GetCredits();
-}
+    auto x = proc.GenerateThumbnailImage();
 
-void GetTags(CAFF::CAFFProcessor *proc) {
+    std::cout << "Finished processing" << std::endl;
 
+    if (x != nullptr)
+        delete[] x;
+
+    return 0;
 }
