@@ -33,7 +33,7 @@
 #include <iostream>
 #include <vector>
 #include <cstring>
-
+#include <memory>
 
 namespace CAFF::Utils {
     enum CAFF_Block_Type {
@@ -85,7 +85,7 @@ namespace NativeComponent::Types {
 }
 
 template<typename T>
-void GetData(unsigned char *data, unsigned long long start, unsigned long long length, T *result) {
+void GetData(const unsigned char *data, unsigned long long start, unsigned long long length, T *result) {
     mempcpy((char *) result, &data[start], length);
 }
 

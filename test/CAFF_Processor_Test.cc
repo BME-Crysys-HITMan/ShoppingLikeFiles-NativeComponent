@@ -1,9 +1,4 @@
 
-//
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 28.
-//
-
-
 // MIT License
 //
 // Copyright (c) 2022.  - BME-Crysys-HITMan
@@ -26,30 +21,34 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
-#define SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
 
-#include "Utils.h"
+//
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 11. 09.
+//
+#include <gtest/gtest.h>
+#include "CAFF_Processor.h"
 
-/**
- * Validates a CAFF header block
- * @param data field of containing block
- * @return true, if header is valid
- */
-bool ValidateHeader(const uint8_t *data, std::size_t length, uint64_t *numAnim);
+#if defined(__linux__)
+const std::string folder = "/home/runner/work/ShoppingLikeFiles-NativeComponent/ShoppingLikeFiles-NativeComponent/afl/testfiles/";
+#elif defined(_WIN64) || defined(_WIN32)
+const std::string folder = "../../afl/testfiles/";
+#endif
 
-/**
- * Validates a CAFF Credits block
- * @param data field of containing block
- * @return true, it credits are valid
- */
-bool ValidateCredits(const uint8_t *data, std::size_t length);
+TEST(CAFF_Processor, ValidTest1) {
+    std::cout << "Running with folder: " << folder << std::endl;
+    std::string file = folder + "1.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
+    EXPECT_TRUE(proc.ValidateFile());
+}
 
-/**
- * Validates a CAFF animation block
- * @param data field of containing block
- * @return true if duration and containing CIFF is valid
- */
-bool ValidateAnimation(const uint8_t *data, std::size_t length);
+TEST(CAFF_Processor, ValidTest2) {
+    std::string file = folder + "2.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
+    EXPECT_TRUE(proc.ValidateFile());
+}
 
-#endif //SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
+TEST(CAFF_Processor, ValidTest3) {
+    std::string file = folder + "3.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
+    EXPECT_TRUE(proc.ValidateFile());
+}
