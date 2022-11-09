@@ -39,7 +39,7 @@ std::vector<std::string> getTags(uint8_t *data, uint64_t start, uint64_t len) {
         array[length] = c;
         length++;
         if (c == '\0') {
-            ret.push_back(std::string(array, length-1));
+            ret.emplace_back(std::string(array, length-1));
             length = 0;
             array[0] = '\0';
         }

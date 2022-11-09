@@ -85,6 +85,18 @@ TEST_F(CIFF_Validation, validateHeaderZeroInCaption){
 }
 
 TEST_F(CIFF_Validation, validateHeaderNoEndZeroTagAtLastTag){
+    data[53]='0';
+    data[58]='0';
+    data[63]='0';
+    ASSERT_FALSE(validateHeader(data));
+}
+
+TEST_F(CIFF_Validation, validateHeaderNewLineInTags){
+    data[53]='\n';
+    ASSERT_FALSE(validateHeader(data));
+}
+
+TEST_F(CIFF_Validation, validateHeaderNoEndZeroAtAll){
     data[63]='0';
     ASSERT_FALSE(validateHeader(data));
 }
