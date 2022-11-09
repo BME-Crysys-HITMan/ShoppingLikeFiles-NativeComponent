@@ -186,19 +186,16 @@ bool validateHeader(uint8_t *data) {
         return false;
     }
 
-    //char *tags = nullptr;
+    if(tagsLength==0)
+        return true;
 
     std::size_t tagsStart = 32 + captionLength;
 
     uint8_t *start = data + tagsStart;
-    char c[tagsLength];
+    char tags[tagsLength];
     for (int i = 0; i < tagsLength; ++i) {
-        c[i] = static_cast<char>(*start++);
+        tags[i] = static_cast<char>(*start++);
     }
 
-    bool x = validateTags(c, tagsLength);
-
-    //delete[] tags;
-
-    return x;
+    return validateTags(tags, tagsLength);
 }

@@ -104,60 +104,48 @@ namespace CAFF {
         if (!fileStream) {
             return false;
         }
-        bool isValid;
-        uint64_t numAnim;
-        try {
-            auto header = GetBlock(fileStream);
+        bool firstBlock=true;
+        char ID;
+        int64_t length;
+        uint64_t num_anim;
+        while (fileStream.good()) {
+            fileStream.read(&ID, 1);
+            int id = (int) ID;
+            if(firstBlock){
+                if(ID!=1)
+                    return false;
+                else
+                    firstBlock=false;
+            }
+            fileStream.read((char*)&length, 8);
+            char data[length];
+            fileStream.read(data, length);
+            BasicBlock block;
 
-            isValid = ValidateHeader((uint8_t *) header.data, header.contentSize.getValue(), &numAnim);
-
-            if (!isValid)
-                return isValid;
-
-            while (fileStream.good()) {
-                BasicBlock block = GetBlock(fileStream);
-
-                switch (block.blockType) {
-                    case Utils::Credits:
-                        isValid = ValidateCredits((uint8_t *) block.data, block.contentSize.getValue());
-                        if (isValid) {
-                            ProcessCredit(block.data);
-                        }
-                        break;
-                    case Utils::Animation:
-                        if (numAnim == 0)
-                            return false;
-
-                        isValid = ValidateAnimation((uint8_t *) block.data, block.contentSize.getValue());
-                        if (isValid) {
-                            ProcessTags(block.data);
-                        }
-                        --numAnim;
-                        break;
-                    default:
-                        if (numAnim == 0 && isValid) {
-                            return true;
-                        }
+            block.blockType = Utils::getBlockType(id);
+            block.contentSize = NativeComponent::Types::INT64(length);
+            block.setData((uint8_t *) data);
+            switch (block.blockType) {
+                case Utils::Header:
+                    if(!ValidateHeader((uint8_t *) data, length, &num_anim))
                         return false;
-                }
-
-                if (!isValid)
-                    return isValid;
+                    break;
+                case Utils::Credits:
+                    if(!ValidateCredits((uint8_t *) data, length))
+                        return false;
+                    break;
+                case Utils::Animation:
+                    if (num_anim == 0)
+                        return false;
+                    if(!ValidateAnimation((uint8_t *) data, length))
+                        return false;
+                    --num_anim;
+                    break;
+                case Utils::Unknown:
+                    return false;
             }
-            return isValid;
         }
-        catch (fileEndReached &ex) {
-            if (isValid && numAnim == 0) {
-                return true;
-            }
-            std::cerr << ex.what() << std::endl;
-            return false;
-        }
-        catch (std::exception &ex) {
-            std::cerr << ex.what() << std::endl;
-            return false;
-        }
-
+        return true;
     }
 
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
