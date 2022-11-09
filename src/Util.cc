@@ -100,7 +100,9 @@ void NativeComponent::Types::INT64::setValue(char *arr, std::size_t len) {
                 d[i] = arr[7 - i];
             }
         }
-        auto data = std::bit_cast<uint64_t>(d);
+        uint64_t data;
+        memcpy(&data, d, sizeof(uint64_t));
+
         this->Set(data);
     }
 }

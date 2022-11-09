@@ -224,7 +224,6 @@ namespace CAFF {
         return pixels;
     }
 
-
     Credit CAFFProcessor::GetCredits() {
         return this->metadata;
     }
