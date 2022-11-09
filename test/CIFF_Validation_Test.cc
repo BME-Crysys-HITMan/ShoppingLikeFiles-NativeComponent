@@ -62,6 +62,7 @@ TEST_F(CIFF_Validation, validateHeaderZeroWidthAndContentSize){
     data[20]=0;
     data[12]=0;
     ASSERT_TRUE(validateHeader(data));
+    ASSERT_FALSE(validateContent(data, ciffSize));
 }
 
 TEST_F(CIFF_Validation, validateHeaderWrongWidthSize){
