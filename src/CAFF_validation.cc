@@ -32,7 +32,8 @@
 
 
 bool ValidateHeader_Magic(uint8_t *data, int end) {
-    return std::string((char *) data, end) == "CAFF";
+    std::string s((char *) data, end);
+    return s == "CAFF";
 }
 
 bool ValidateHeader_HeaderSize(uint8_t *data, int start, int headerSizeLength, std::size_t expectedHeaderSize) {
