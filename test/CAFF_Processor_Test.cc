@@ -23,23 +23,32 @@
 
 
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 11. 09.
 //
 #include <gtest/gtest.h>
-#include <CIFF_Processor.h>
+#include "CAFF_Processor.h"
 
-TEST(CIFF_SUITE, PixelSizeNotEqualToContentSize) {
-    /*auto *proc = new CIFF::CIFFProcessor();
+#if defined(__linux__)
+const std::string folder = "/home/runner/work/ShoppingLikeFiles-NativeComponent/ShoppingLikeFiles-NativeComponent/afl/testfiles/";
+#elif defined(_WIN64) || defined(_WIN32)
+const std::string folder = "../../afl/testfiles/";
+#endif
 
-    uint8_t *data = new uint8_t[60];
-    CIFF::Header header;
-    header.contentSize = 20;
-
-    ASSERT_THROW(proc->GetImage(data, &header), const char*);
-
-    delete[] data;*/
+TEST(CAFF_Processor, ValidTest1) {
+    std::cout << "Running with folder: " << folder << std::endl;
+    std::string file = folder + "1.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
+    EXPECT_TRUE(proc.ValidateFile());
 }
 
-TEST(CIFF_SUITE, PixelSizeEqualsToContentSize) {
+TEST(CAFF_Processor, ValidTest2) {
+    std::string file = folder + "2.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
+    EXPECT_TRUE(proc.ValidateFile());
+}
 
+TEST(CAFF_Processor, ValidTest3) {
+    std::string file = folder + "3.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
+    EXPECT_TRUE(proc.ValidateFile());
 }

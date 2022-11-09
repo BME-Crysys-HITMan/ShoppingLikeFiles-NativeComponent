@@ -21,6 +21,7 @@ add_library(ShoppingLikeFiles_NativeComponent SHARED
         src/CAFF_validation.cc
         src/CIFF_validation.cc
         src/Util.cc
+        src/CIFF_Utils.cc
         src/CIFF_Processor.cc
         src/BasicBlock.cc)
 
@@ -29,7 +30,7 @@ add_executable(Debug
         src/CAFF_Processor.cc
         src/CAFF_validation.cc
         src/CIFF_validation.cc
-        src/Util.cc src/main.cc src/CIFF_Processor.cc src/BasicBlock.cc)
+        src/Util.cc src/main.cc src/CIFF_Processor.cc src/BasicBlock.cc src/CIFF_Utils.cc include/CIFF_Utils.h)
 
 target_include_directories(ShoppingLikeFiles_NativeComponent PRIVATE include)
 target_include_directories(Debug PRIVATE include)

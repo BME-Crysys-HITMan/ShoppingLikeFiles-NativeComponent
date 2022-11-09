@@ -36,20 +36,20 @@
  * @param data field of containing block
  * @return true, if header is valid
  */
-bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *numAnim);
+bool ValidateHeader(const uint8_t *data, std::size_t length, uint64_t *numAnim);
 
 /**
  * Validates a CAFF Credits block
  * @param data field of containing block
  * @return true, it credits are valid
  */
-bool ValidateCredits(uint8_t *data, std::size_t length);
+bool ValidateCredits(const uint8_t *data, std::size_t length);
 
 /**
  * Validates a CAFF animation block
  * @param data field of containing block
  * @return true if duration and containing CIFF is valid
  */
-bool ValidateAnimation(uint8_t *data, std::size_t length);
+bool ValidateAnimation(const uint8_t *data, std::size_t length);
 
 #endif //SHOPPINGLIKEFLIES_AFL_CAFF_VALIDATION_H
