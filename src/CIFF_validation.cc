@@ -123,8 +123,8 @@ bool validateHeader(uint8_t *data) {
 
     if (!validateContentSize(content_size, width, height))
         return false;
-
-    auto caption = getCaption(data, 32, abs(content_size-header_size));
+    auto maxCaptionSize= content_size > header_size ? content_size-header_size : header_size-content_size;
+    auto caption = getCaption(data, 32, maxCaptionSize);
     if(caption.back()!='\n')
         return false;
     size_t captionLength = caption.length();

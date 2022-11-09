@@ -32,8 +32,12 @@ CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
     GetData(data, CONTENT_SIZE_OFFSET, 8, &header->contentSize);
     GetData(data, WIDTH_OFFSET, 8, &header->width);
     GetData(data, HEIGHT_OFFSET, 8, &header->height);
-    header->caption = getCaption(data, CAPTION_OFFSET, abs(header->contentSize-header->headerSize));
-    header->caption.pop_back(); //remove \n from the end;
+    auto maxCaptionSize= header->contentSize > header->headerSize ? header->contentSize-header->headerSize : header->headerSize-header->contentSize;
+    header->caption = getCaption(data, CAPTION_OFFSET, maxCaptionSize);
+    /*
+     * remove \n from the end;
+     */
+    header->caption.pop_back();
     auto captionLen = header->caption.length() + 1;
     uint64_t tagsStart = CAPTION_OFFSET + captionLen;
 
