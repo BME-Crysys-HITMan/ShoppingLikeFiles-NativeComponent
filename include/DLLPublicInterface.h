@@ -34,13 +34,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-__declspec(dllexport) CAFF::CAFFProcessor *CreateCaffProcessor(std::string);
-__declspec(dllexport) void DeleteCaffProcessor(CAFF::CAFFProcessor *proc);
+CAFF::CAFFProcessor *CreateCaffProcessor(std::string);
+void DeleteCaffProcessor(CAFF::CAFFProcessor *proc);
 
-__declspec(dllexport) bool ValidateFile(CAFF::CAFFProcessor *proc);
-__declspec(dllexport) CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc);
-__declspec(dllexport) CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc);
-__declspec(dllexport) void GetTags(CAFF::CAFFProcessor *proc);
+bool ValidateFile(CAFF::CAFFProcessor *proc);
+CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc);
+CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc);
+void GetTags(CAFF::CAFFProcessor *proc);
 
 //1)Init
 //2)Validate

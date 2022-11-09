@@ -40,7 +40,7 @@ namespace CAFF {
         uint64_t width;
         uint64_t height;
         //Creator
-        std::string creator;
+        const char *creator;
     };
 
     class CAFFProcessor {
