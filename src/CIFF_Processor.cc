@@ -112,8 +112,8 @@ bool CIFF::CIFFProcessor::IsValid(uint8_t *data, NativeComponent::Types::INT64 c
     if (!isValid)
         return isValid;
 
-    auto length = ciffSize.getValue() - DURATION_LENGTH;
+    auto contentLength = ciffSize.getValue() - DURATION_LENGTH;
 
-    isValid = validateContent(data, length);
+    isValid = validateContent(data, contentLength);
     return isValid;
 }

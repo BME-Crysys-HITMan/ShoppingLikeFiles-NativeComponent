@@ -96,17 +96,11 @@ bool validateTags(char *tags, std::size_t length) {
  * @param caption
  * @return
  */
-size_t getCaptionLength(uint8_t *caption) {
-    std::size_t len = 0;
-
-    return len;
-}
-
-
-std::string getCaption(uint8_t *data, std::size_t start) {
+std::string getCaption(uint8_t *data, std::size_t start, std::size_t header_size) {
     std::vector<char> vec;
     uint8_t *p = data + start;
-    while (*p != '\n') {
+    size_t counter = 0;
+    while (*p != '\n' || counter++ < (header_size - 36)) {
         auto c = (char) *p++;
         vec.push_back(c);
     }
@@ -177,7 +171,7 @@ bool validateHeader(uint8_t *data) {
     if (!validateContentSize(content_size, width, height))
         return false;
 
-    auto caption = getCaption(data, 32);
+    auto caption = getCaption(data, 32, header_size);
 
     size_t captionLength = caption.length() + 1;
 
@@ -186,6 +180,9 @@ bool validateHeader(uint8_t *data) {
     if (!validateHeaderSize(header_size, captionLength, tagsLength)) {
         return false;
     }
+
+    if((width==0 || height==0) && content_size!=0)
+        return false;
 
     if (tagsLength == 0)
         return true;
