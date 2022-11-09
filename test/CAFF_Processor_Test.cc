@@ -28,17 +28,27 @@
 #include <gtest/gtest.h>
 #include "CAFF_Processor.h"
 
+#if defined(__linux__)
+std::string folder = "/home/runner/work/ShoppingLikeFiles-NativeComponent/ShoppingLikeFiles-NativeComponent/afl/testfiles/";
+#elif defined(_WIN64) || defined(_WIN32)
+std::string folder = "../../afl/testfiles/";
+#endif
+
 TEST(CAFF_Processor, ValidTest1) {
-    CAFF::CAFFProcessor proc("../../afl/testfiles/1.caff");
+    std::cout << "Running with folder: " << folder << std::endl;
+    std::string file = folder + "1.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
     EXPECT_TRUE(proc.ValidateFile());
 }
 
 TEST(CAFF_Processor, ValidTest2) {
-    CAFF::CAFFProcessor proc("../../afl/testfiles/2.caff");
+    std::string file = folder + "2.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
     EXPECT_TRUE(proc.ValidateFile());
 }
 
 TEST(CAFF_Processor, ValidTest3) {
-    CAFF::CAFFProcessor proc("../../afl/testfiles/3.caff");
+    std::string file = folder + "3.caff";
+    CAFF::CAFFProcessor proc(file.c_str());
     EXPECT_TRUE(proc.ValidateFile());
 }
