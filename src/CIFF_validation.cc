@@ -28,6 +28,7 @@
 
 #include <sstream>
 #include <cstring>
+#include <algorithm>
 #include "CIFF_validation.h"
 
 /**
@@ -186,7 +187,7 @@ bool validateHeader(uint8_t *data) {
         return false;
     }
 
-    if(tagsLength==0)
+    if (tagsLength == 0)
         return true;
 
     std::size_t tagsStart = 32 + captionLength;

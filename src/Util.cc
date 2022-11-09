@@ -31,14 +31,6 @@
 #include <vector>
 #include <cstring>
 
-bool NativeComponent::Utils::isLittleEndian() {
-    if constexpr (std::endian::native == std::endian::little) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 CAFF::Utils::CAFF_Block_Type CAFF::Utils::getBlockType(uint8_t id) {
     switch (id) {
         case 0x01: {
@@ -68,66 +60,18 @@ void Type::TypeBase<T>::Set(T data) {
     value = data;
 }
 
-
-std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComponent::Types::INT16 &obj) {
-    char arr[2];
-
-    input >> arr;
-
-    obj.setValue(arr, 2);
-
-    return input;
-}
-
-void NativeComponent::Types::INT16::setValue(char *arr, std::size_t len) {
-    if (len == 2) {
-        char d[2] = {arr[0], arr[1]};
-        uint16_t data;
-        memcpy(&data, d, sizeof(uint16_t));
-        this->Set(data);
-    }
-}
-
 void NativeComponent::Types::INT64::setValue(char *arr, std::size_t len) {
-    bool little = Utils::isLittleEndian();
     if (len == 8) {
         char d[8];
-        if (little) {
-            for (std::size_t i = 0; i < len; ++i) {
-                d[i] = arr[i];
-            }
-        } else {
-            for (std::size_t i = 0; i < len; ++i) {
-                d[i] = arr[7 - i];
-            }
+        for (std::size_t i = 0; i < len; ++i) {
+            d[i] = arr[i];
         }
+
         uint64_t data;
         memcpy(&data, d, sizeof(uint64_t));
 
         this->Set(data);
     }
-}
-
-std::istream &NativeComponent::Types::operator>>(std::istream &input, NativeComponent::Types::INT64 &obj) {
-    std::cout << "INT64 operator>>" << std::endl;
-    char arr[8];
-
-    input >> arr;
-
-    std::cout << "array content:" << std::endl;
-
-    auto print = [](const uint8_t &c) { std::cout << (int) (c) << std::endl; };
-
-    std::for_each(&arr[0], &arr[7] + 1, print);
-
-    obj.setValue(arr, 8);
-    return input;
-}
-
-std::ostream &NativeComponent::Types::operator<<(std::ostream &output, const NativeComponent::Types::INT64 &obj) {
-    output << obj.value;
-
-    return output;
 }
 
 void NativeComponent::Types::INT64::FromArray(std::vector<char> vec) {

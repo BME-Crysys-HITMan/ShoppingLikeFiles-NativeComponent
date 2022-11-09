@@ -34,9 +34,6 @@
 #include <vector>
 #include <cstring>
 
-namespace NativeComponent::Utils {
-    bool isLittleEndian();
-}
 
 namespace CAFF::Utils {
     enum CAFF_Block_Type {
@@ -70,14 +67,6 @@ namespace NativeComponent::Types {
         void Set(T data);
     };
 
-    class INT16 : TypeBase<unsigned short> {
-    public:
-        friend std::istream &operator>>(std::istream &input, INT16 &obj);
-
-    protected:
-        void setValue(char *arr, std::size_t len);
-    };
-
     class INT64 : public TypeBase<unsigned long long> {
     public:
         INT64();
@@ -87,10 +76,6 @@ namespace NativeComponent::Types {
         INT64(char arr[]);
 
         unsigned long long getValue();
-
-        friend std::istream &operator>>(std::istream &input, INT64 &obj);
-
-        friend std::ostream &operator<<(std::ostream &output, const INT64 &obj);
 
         void FromArray(std::vector<char> vec);
 
