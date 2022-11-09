@@ -23,6 +23,7 @@ add_library(TestLib
 
 add_executable(
         hello_test
+        Utils_unittest.cc
         CIFF_unittest.cc 
         ../src/CIFF_Processor.cc 
         ../src/BasicBlock.cc 
