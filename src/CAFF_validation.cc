@@ -31,18 +31,18 @@
 #include "Utils.h"
 
 
-bool ValidateHeader_Magic(uint8_t *data, int end) {
+bool ValidateHeader_Magic(const uint8_t *data, int end) {
     std::string s((char *) data, end);
     return s == "CAFF";
 }
 
-bool ValidateHeader_HeaderSize(uint8_t *data, int start, int headerSizeLength, std::size_t expectedHeaderSize) {
+bool ValidateHeader_HeaderSize(const uint8_t *data, int start, int headerSizeLength, std::size_t expectedHeaderSize) {
     int64_t header_size;
     GetData(data, start, headerSizeLength, &header_size);
     return expectedHeaderSize == header_size;
 }
 
-bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *num_anim) {
+bool ValidateHeader(const uint8_t *data, std::size_t length, uint64_t *num_anim) {
     int magicLength = 4;
     int headerSizeLength = 8;
     int numAnimLength = 8;
@@ -54,7 +54,7 @@ bool ValidateHeader(uint8_t *data, std::size_t length, uint64_t *num_anim) {
            && ValidateHeader_HeaderSize(data, magicLength, headerSizeLength, length);
 }
 
-bool ContainsOnlyASCII(char *string, int size) {
+bool ContainsOnlyASCII(const char *string, int size) {
     for (int i = 0; i < size; i++) {
         if (static_cast<unsigned char>(string[i]) > 127) {
             return false;
@@ -63,7 +63,7 @@ bool ContainsOnlyASCII(char *string, int size) {
     return true;
 }
 
-bool ValidateCredits(uint8_t *data, std::size_t length) {
+bool ValidateCredits(const uint8_t *data, std::size_t length) {
     int start = 0;
     int yearSize = 2;
     int16_t year;
@@ -104,7 +104,7 @@ bool ValidateCredits(uint8_t *data, std::size_t length) {
     return ContainsOnlyASCII(creator, creator_len);
 }
 
-bool ValidateAnimation(uint8_t *data, std::size_t length) {
+bool ValidateAnimation(const uint8_t *data, std::size_t length) {
     if (length < 8) {
         return false;
     }
@@ -117,6 +117,8 @@ bool ValidateAnimation(uint8_t *data, std::size_t length) {
     unsigned long long contentLength = ciffSize.getValue() - durationSize;
 
     auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
+    auto c = std::make_unique<uint8_t[]>(contentLength);
+
     GetData(data, durationSize, contentLength, ciff);
     CIFF::CIFFProcessor proc{};
     auto valid = proc.IsValid(ciff, ciffSize);

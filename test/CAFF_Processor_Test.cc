@@ -29,9 +29,9 @@
 #include "CAFF_Processor.h"
 
 #if defined(__linux__)
-std::string folder = "/home/runner/work/ShoppingLikeFiles-NativeComponent/ShoppingLikeFiles-NativeComponent/afl/testfiles/";
+const std::string folder = "/home/runner/work/ShoppingLikeFiles-NativeComponent/ShoppingLikeFiles-NativeComponent/afl/testfiles/";
 #elif defined(_WIN64) || defined(_WIN32)
-std::string folder = "../../afl/testfiles/";
+const std::string folder = "../../afl/testfiles/";
 #endif
 
 TEST(CAFF_Processor, ValidTest1) {

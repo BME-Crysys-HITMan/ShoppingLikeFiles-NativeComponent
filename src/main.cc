@@ -23,25 +23,26 @@
 // Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
 //
 
-
 #include "CAFF_Processor.h"
 #include <string>
+#include <iostream>
+#include <memory>
 
 int main(int argv, char **argc) {
-    std::string fileName(
-            R"(Z:\BME\MSc\SzamBiz\ShoppingLikeFiles-NativeComponent\afl\testfiles\1.caff)");
+    std::string fileName("../afl/testfiles/1.caff");
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();
 
     std::cerr << isValid << std::endl;
 
-    auto x = proc.GenerateThumbnailImage();
+    auto arr = std::make_unique<CIFF::Pixel[]>(10);
+
+    std::unique_ptr<CIFF::Pixel> c(proc.GenerateThumbnailImage());
+
+    std::cout << (int) c->red << std::endl;
 
     std::cout << "Finished processing" << std::endl;
-
-    if (x != nullptr)
-        delete[] x;
 
     return 0;
 }
