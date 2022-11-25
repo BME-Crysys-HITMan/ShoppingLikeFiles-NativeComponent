@@ -177,8 +177,8 @@ namespace CAFF {
         return true;
     }
 
-    CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
-        CIFF::Pixel *pixels = nullptr;
+    std::vector<CIFF::Pixel> CAFFProcessor::GenerateThumbnailImage(uint64_t &height, uint64_t &width) {
+        std::vector<CIFF::Pixel> pixels;
 
         if (!this->isValidFile) {
             return pixels;
@@ -199,20 +199,31 @@ namespace CAFF {
             block->blockType = Utils::getBlockType(id);
 
             if (block->blockType == Utils::Animation) {
-                CIFF::CIFFProcessor proc;
                 unsigned long long durationSize = 8;
                 NativeComponent::Types::INT64 ciffSize(length);
                 unsigned long long contentLength = ciffSize.getValue() - durationSize;
                 auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
                 GetData(block->data.get(), durationSize, contentLength, ciff);
-                std::unique_ptr<CIFF::Header> header(proc.ProcessHeader((uint8_t *) ciff));
+                std::unique_ptr<CIFF::Header> header(CIFF::CIFFProcessor::ProcessHeader((uint8_t *) ciff));
+
+                height = header->height;
+                width = header->width;
+
+                auto image =
+                        CIFF::CIFFProcessor::GetImage((uint8_t *) ciff, header.get());
+
+                for (std::size_t i = 0; i < width * height; ++i) {
+                    auto p = image[i];
+                    pixels.push_back(p);
+                }
 
                 this->metadata.height = header->height;
                 this->metadata.width = header->width;
 
-                pixels = proc.GetImage((uint8_t *) ciff, header.get());
-
+                delete[] image;
                 delete[] ciff;
+
+                pixels.shrink_to_fit();
 
                 return pixels;
                 /**

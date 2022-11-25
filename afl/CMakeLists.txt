@@ -11,9 +11,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0")
 add_executable(
         afl_test
         TestHarness.cpp
-        ../include/DLLPublicInterface.h
         ../include/Utils.h
-        ../src/DLLPublicInterface.cc
         ../src/CAFF_Processor.cc
         ../src/CAFF_validation.cc
         ../src/CIFF_validation.cc

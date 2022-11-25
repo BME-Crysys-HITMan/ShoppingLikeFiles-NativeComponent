@@ -61,7 +61,7 @@ namespace CAFF {
 
         bool ValidateFile();
 
-        CIFF::Pixel *GenerateThumbnailImage();
+        std::vector<CIFF::Pixel> GenerateThumbnailImage(uint64_t& height, uint64_t& width);
 
         Credit GetCredits();
     };

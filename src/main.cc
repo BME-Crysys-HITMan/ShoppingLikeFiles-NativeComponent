@@ -26,23 +26,36 @@
 #include "CAFF_Processor.h"
 #include <string>
 #include <iostream>
-#include <memory>
+#include <algorithm>
+
+
+std::ostream &operator<<(std::ostream &stream, const CIFF::Pixel &data) {
+    stream << (int) data.red << (int) data.green << (int) data.blue;
+    return stream;
+}
 
 int main(int argv, char **argc) {
-    std::string fileName("../afl/testfiles/1.caff");
+
+    if (argv != 2) {
+        std::cout << "Wrong arguments given." << std::endl;
+        std::cout << "Usage: ./main /path/to/file" << std::endl;
+        return -1;
+    }
+
+    std::string fileName(argc[1]);
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();
 
-    std::cerr << isValid << std::endl;
+    std::cout << isValid << std::endl;
 
-    auto arr = std::make_unique<CIFF::Pixel[]>(10);
+    uint64_t width, height;
+    auto pixels = proc.GenerateThumbnailImage(height, width);
 
-    std::unique_ptr<CIFF::Pixel> c(proc.GenerateThumbnailImage());
-
-    std::cout << (int) c->red << std::endl;
-
-    std::cout << "Finished processing" << std::endl;
+    std::for_each(pixels.begin(), pixels.end(), [&](const auto &item) {
+        std::cout << item;
+    });
+    std::cout << std::endl;
 
     return 0;
 }

@@ -62,6 +62,13 @@ namespace CIFF {
 
         //Third
         uint8_t blue;
+
+        std::ostream &operator<<(std::ostream &stream) const {
+
+            stream << (int) this->red << (int) this->green << (int) this->blue;
+
+            return stream;
+        }
     };
 
     class CIFFProcessor {
