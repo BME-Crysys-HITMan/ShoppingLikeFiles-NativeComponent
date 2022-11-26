@@ -36,7 +36,7 @@ std::ostream &operator<<(std::ostream &stream, const CIFF::Pixel &data) {
 
 int main(int argv, char **argc) {
 
-    if (argv != 2) {
+    if (argv < 2) {
         //std::cout << "Wrong arguments given." << std::endl;
         //std::cout << "Usage: ./main /path/to/file" << std::endl;
         return -1;
