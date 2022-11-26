@@ -47,15 +47,18 @@ int main(int argv, char **argc) {
 
     auto isValid = proc.ValidateFile();
 
+    if (isValid) {
+        std::cout << "File is valid!" << std::endl;
+    }
     std::cout << isValid << std::endl;
 
-    uint64_t width, height;
+    /*uint64_t width, height;
     auto pixels = proc.GenerateThumbnailImage(height, width);
 
     std::for_each(pixels.begin(), pixels.end(), [&](const auto &item) {
         std::cout << item;
     });
-    std::cout << std::endl;
+    std::cout << std::endl;*/
 
     return 0;
 }
