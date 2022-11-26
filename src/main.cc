@@ -43,6 +43,9 @@ int main(int argv, char **argc) {
     }
 
     std::string fileName(argc[1]);
+
+    std::cout << "Called with file: " << fileName << std::endl;
+
     CAFF::CAFFProcessor proc(fileName.c_str());
 
     auto isValid = proc.ValidateFile();
