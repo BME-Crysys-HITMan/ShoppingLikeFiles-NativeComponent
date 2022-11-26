@@ -43,8 +43,8 @@ int main(int argv, char **argc) {
     }
 
     std::string fileName(argc[1]);
-
-    std::cout << "Called with file: " << fileName << std::endl;
+    std::string debugText("Called with file: ");
+    std::cout << debugText << fileName << std::endl;
 
     CAFF::CAFFProcessor proc(fileName.c_str());
 
