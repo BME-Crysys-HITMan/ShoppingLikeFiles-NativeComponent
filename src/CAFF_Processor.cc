@@ -123,16 +123,16 @@ namespace CAFF {
              * End bugfix
              */
 
-            //char data[length];
-            auto data = std::make_unique<char[]>(length);
-            std::vector<char> vector(length);
+            char data[length];
+            //auto data = std::make_unique<char[]>(length);
+            //std::vector<char> vector(length);
 
-            fileStream.read(vector.data(), length);
+            fileStream.read(data, length);
 
-            auto block = std::make_shared<BasicBlock>(data.get(), length);
+            //auto block = std::make_shared<BasicBlock>(data, length);
 
-            //BasicBlock block(data.get());
-            block->blockType = Utils::getBlockType(id);
+            BasicBlock block(data, length);
+            block.blockType = Utils::getBlockType(id);
 
             /**
              * Bugfix for RUN 3
@@ -145,19 +145,19 @@ namespace CAFF {
 
             bool valid = false;
 
-            switch (block->blockType) {
+            switch (block.blockType) {
                 case Utils::Header:
-                    valid = ValidateHeader(block->data.get(), length, &num_anim);
+                    valid = ValidateHeader(block.data.get(), length, &num_anim);
                     break;
                 case Utils::Credits:
-                    valid = ValidateCredits(block->data.get(), length);
+                    valid = ValidateCredits(block.data.get(), length);
                     break;
                 case Utils::Animation:
                     if (num_anim == 0) {
                         valid = false;
                         break;
                     }
-                    valid = ValidateAnimation(block->data.get(), length);
+                    valid = ValidateAnimation(block.data.get(), length);
                     --num_anim;
                     break;
                 case Utils::Unknown:
@@ -169,10 +169,10 @@ namespace CAFF {
                 return valid;
             }
 
-            if (block->blockType == Utils::Credits) {
-                ProcessCredit(block->data.get());
-            } else if (block->blockType == Utils::Animation) {
-                ProcessTags(block->data.get());
+            if (block.blockType == Utils::Credits) {
+                ProcessCredit(block.data.get());
+            } else if (block.blockType == Utils::Animation) {
+                ProcessTags(block.data.get());
             }
         }
         return true;
@@ -193,18 +193,19 @@ namespace CAFF {
             ifs.read(&ID, 1);
             int id = (int) ID;
             ifs.read((char *) &length, 8);
-            auto data = std::make_unique<char[]>(length);
-            ifs.read(data.get(), length);
-            auto block = std::make_shared<BasicBlock>(data.get(), length);
+            //auto data = std::make_unique<char[]>(length);
+            char data[length];
+            ifs.read(data, length);
+            //auto block = std::make_shared<BasicBlock>(data, length);
+            BasicBlock block(data, length);
+            block.blockType = Utils::getBlockType(id);
 
-            block->blockType = Utils::getBlockType(id);
-
-            if (block->blockType == Utils::Animation) {
+            if (block.blockType == Utils::Animation) {
                 unsigned long long durationSize = 8;
                 NativeComponent::Types::INT64 ciffSize(length);
                 unsigned long long contentLength = ciffSize.getValue() - durationSize;
                 auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
-                GetData(block->data.get(), durationSize, contentLength, ciff);
+                GetData(block.data.get(), durationSize, contentLength, ciff);
                 std::unique_ptr<CIFF::Header> header(CIFF::CIFFProcessor::ProcessHeader((uint8_t *) ciff));
 
                 height = header->height;
