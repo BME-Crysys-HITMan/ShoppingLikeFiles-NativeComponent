@@ -38,14 +38,10 @@ std::ostream &operator<<(std::ostream &stream, const CIFF::Pixel &data) {
 int main(int argv, char **argc) {
 
     if (argv < 2) {
-        //std::cout << "Wrong arguments given." << std::endl;
-        //std::cout << "Usage: ./main /path/to/file" << std::endl;
         return -1;
     }
 
     std::string fileName(argc[1]);
-    std::string debugText("Called with file: ");
-    std::cout << debugText << fileName << std::endl;
 
     CAFF::CAFFProcessor proc(fileName.c_str());
 
@@ -53,6 +49,7 @@ int main(int argv, char **argc) {
 
     if (isValid) {
         std::cout << "File is valid!" << std::endl;
+        return 0;
     }
     std::cout << isValid << std::endl;
 
@@ -64,5 +61,5 @@ int main(int argv, char **argc) {
     });
     std::cout << std::endl;*/
 
-    return 0;
+    return 1;
 }
