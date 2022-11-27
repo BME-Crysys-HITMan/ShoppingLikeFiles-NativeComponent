@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.22)
 
 project(ShoppingLikeFiles_NativeComponent)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 
 option(ci-run "Running tests in CI environment." OFF)
 
