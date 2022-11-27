@@ -125,8 +125,9 @@ namespace CAFF {
 
             //char data[length];
             auto data = std::make_unique<char[]>(length);
+            std::vector<char> vector(length);
 
-            fileStream.read(data.get(), length);
+            fileStream.read(vector.data(), length);
 
             auto block = std::make_shared<BasicBlock>(data.get(), length);
 
