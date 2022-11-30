@@ -39,7 +39,11 @@ struct BasicBlock {
 
     BasicBlock(std::unique_ptr<unsigned char[]> ptr);
 
+    BasicBlock(std::unique_ptr<unsigned char[]> ptr, uint64_t size);
+
     BasicBlock(const char *data, uint64_t size);
+
+    BasicBlock() : data(std::nullptr_t()), contentSize((uint64_t) 0), blockType(CAFF::Utils::Unknown) {};
 };
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H

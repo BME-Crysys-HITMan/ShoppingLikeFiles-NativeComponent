@@ -13,27 +13,18 @@ endif ()
 message("Compiler: ${CMAKE_CXX_COMPILER}")
 message("Flags: ${CMAKE_CXX_FLAGS}")
 
-add_library(ShoppingLikeFiles_NativeComponent SHARED
-        include/DLLPublicInterface.h
-        include/Utils.h
-        src/DLLPublicInterface.cc
+add_executable(CAFF_Processor
+        src/main.cc
         src/CAFF_Processor.cc
+        src/CIFF_Processor.cc
         src/CAFF_validation.cc
         src/CIFF_validation.cc
         src/Util.cc
         src/CIFF_Utils.cc
-        src/CIFF_Processor.cc
-        src/BasicBlock.cc)
+        src/BasicBlock.cc
+        include/CIFF_Utils.h)
 
-add_executable(Debug
-        src/DLLPublicInterface.cc
-        src/CAFF_Processor.cc
-        src/CAFF_validation.cc
-        src/CIFF_validation.cc
-        src/Util.cc src/main.cc src/CIFF_Processor.cc src/BasicBlock.cc src/CIFF_Utils.cc include/CIFF_Utils.h)
-
-target_include_directories(ShoppingLikeFiles_NativeComponent PRIVATE include)
-target_include_directories(Debug PRIVATE include)
+target_include_directories(CAFF_Processor PRIVATE include)
 
 enable_testing()
 add_subdirectory(test)

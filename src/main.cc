@@ -27,22 +27,69 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <fstream>
 
 int main(int argv, char **argc) {
-    std::string fileName("../afl/testfiles/1.caff");
+    if (argv < 3) {
+        std::cout << "Usage: CAFF_Processor /path/to/file [options]" << std::endl;
+        if (argv == 2) {
+            std::string fileName(argc[1]);
+            if (fileName == "--help") {
+                std::cout << "Usage: CAFF_Processor /path/to/file [options]" << std::endl;
+                std::cout << "Commands:" << std::endl;
+                std::cout << "--validate\tValidates a file. Prints 1 if file is valid." << std::endl;
+                std::cout
+                        << "--getThumbnail\tGenerated a thumbnail image and puts it to standard output. The sequence start with WidthHeightPixelData"
+                        << std::endl;
+                return 0;
+            }
+        }
+        return 0;
+    }
+
+    std::string fileName(argc[1]);
+    std::string command(argc[2]);
+
     CAFF::CAFFProcessor proc(fileName.c_str());
 
-    auto isValid = proc.ValidateFile();
+    if (command == "--validate") {
+        auto isValid = proc.ValidateFile();
+        std::cout << isValid << std::endl;
+    } else if (command == "--getThumbnail") {
+        if (argv < 4) {
+            std::cout << "Usage: CAFF_Processor /path/to/file --getThumbnail /path/to/return/folder" << std::endl;
+            return 0;
+        }
+        std::string folder(argc[3]);
+        CIFF::Pixel *c = proc.GenerateThumbnailImage();
 
-    std::cerr << isValid << std::endl;
+        auto credit = proc.GetCredits();
+        uint64_t size = credit.width * credit.height;
 
-    auto arr = std::make_unique<CIFF::Pixel[]>(10);
+        std::cout << credit.width << credit.height;
 
-    std::unique_ptr<CIFF::Pixel> c(proc.GenerateThumbnailImage());
+        auto index = fileName.find_last_of('/');
+        auto f = fileName.substr(index);
 
-    std::cout << (int) c->red << std::endl;
+        folder.append(f);
+        folder.append(".pixels");
+        std::ofstream ofs;
 
-    std::cout << "Finished processing" << std::endl;
+        try {
+            ofs.open(folder, std::ios::binary);
+            if (ofs.fail()) throw ("Can't open output file");
+            ofs << credit.width << credit.height;
+
+            for (std::size_t i = 0; i < size; ++i) {
+                auto pixel = *c++;
+                ofs << pixel.red << pixel.green << pixel.blue;
+            }
+        } catch (const char *err) {
+            std::cerr << err;
+        }
+
+        //delete[] c;
+    }
 
     return 0;
 }

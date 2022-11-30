@@ -1,6 +1,8 @@
+
 // MIT License
 //
-// Copyright (c) 2022 BME-Crysys-HITMan
+// Copyright (c) 2022.  - BME-Crysys-HITMan
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -19,33 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+
 //
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 11/6/2022.
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 11. 30.
 //
 
-#include "BasicBlock.h"
+#include <CAFF_validation.h>
 
-void BasicBlock::setData(const char *data) {
-    this->data = std::make_unique<unsigned char[]>(this->contentSize.getValue());
-    for (std::size_t i = 0; i < this->contentSize.getValue(); ++i) {
-        this->data[i] = static_cast<unsigned char>(data[i]);
+const int SIZE = 60;
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        return -1;
     }
-}
 
-void BasicBlock::setData(std::unique_ptr<unsigned char[]> ptr) {
-    this->data = std::move(ptr);
-}
+    uint8_t data[SIZE];
+    memcpy(data, argv[1], SIZE * sizeof(uint8_t));
 
-BasicBlock::BasicBlock(std::unique_ptr<unsigned char[]> ptr) {
-    this->data = std::move(ptr);
-}
+    auto response = ValidateCredits(data, SIZE);
 
-BasicBlock::BasicBlock(const char *data, uint64_t size) {
-    this->contentSize = NativeComponent::Types::INT64(size);
-    this->setData(data);
-}
+    if (response) {
+        std::cout << "Credit is valid!" << std::endl;
+        return 1;
+    }
 
-BasicBlock::BasicBlock(std::unique_ptr<unsigned char[]> ptr, uint64_t size) {
-    this->data = std::move(ptr);
-    this->contentSize = size;
+    return 0;
 }
