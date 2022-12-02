@@ -1,9 +1,4 @@
 
-//
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
-//
-
-
 // MIT License
 //
 // Copyright (c) 2022.  - BME-Crysys-HITMan
@@ -26,53 +21,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#ifndef SHOPPINGLIKEFILES_NATIVECOMPONENT_CAFF_PROCESSOR_H
-#define SHOPPINGLIKEFILES_NATIVECOMPONENT_CAFF_PROCESSOR_H
 
-#include <string>
-#include "CIFF_Processor.h"
-#include "Utils.h"
-#include <set>
+//
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 11. 30.
+//
 
-namespace CAFF {
-    namespace Types = NativeComponent::Types;
-    struct Credit {
-        uint64_t width;
-        uint64_t height;
-        uint16_t year;
-        uint8_t month;
-        uint8_t day;
-        uint8_t hour;
-        uint8_t minute;
-        //Creator
-        const char *creator;
-    };
+#include <CAFF_validation.h>
 
-    class CAFFProcessor {
-    private:
-        const char *fileName;
-        bool isValidFile = false;
-        Credit metadata;
-        std::set<std::string> tags;
+const int SIZE = 60;
 
-        void ProcessCredit(uint8_t *data);
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        return -1;
+    }
 
-        void ProcessTags(uint8_t *data);
+    uint8_t data[SIZE];
+    memcpy(data, argv[1], SIZE * sizeof(uint8_t));
 
-    public:
-        explicit CAFFProcessor(const char *filename);
+    auto response = ValidateCredits(data, SIZE);
 
-        ~CAFFProcessor();
+    if (response) {
+        std::cout << "Credit is valid!" << std::endl;
+        return 1;
+    }
 
-        bool ValidateFile();
-
-        CIFF::Pixel *GenerateThumbnailImage();
-
-        Credit GetCredits();
-
-        std::set<std::string> GetTags();
-    };
+    return 0;
 }
-
-
-#endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_CAFF_PROCESSOR_H

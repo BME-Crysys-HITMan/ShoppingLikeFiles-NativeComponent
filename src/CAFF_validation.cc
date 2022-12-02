@@ -28,7 +28,6 @@
 #include "CIFF_Processor.h"
 #include <cstring>
 #include <string>
-#include "Utils.h"
 
 
 bool ValidateHeader_Magic(const uint8_t *data, int end) {
@@ -50,8 +49,9 @@ bool ValidateHeader(const uint8_t *data, std::size_t length, uint64_t *num_anim)
         return false;
     GetData(data, magicLength + headerSizeLength, numAnimLength, num_anim);
 
-    return ValidateHeader_Magic(data, magicLength)
-           && ValidateHeader_HeaderSize(data, magicLength, headerSizeLength, length);
+    bool validMagic = ValidateHeader_Magic(data, magicLength);
+    bool validHeader = ValidateHeader_HeaderSize(data, magicLength, headerSizeLength, length);
+    return validMagic && validHeader;
 }
 
 bool ContainsOnlyASCII(const char *string, int size) {

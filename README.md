@@ -7,3 +7,19 @@
 This repository contains all project and necessities for the native component part of the application
 
 Documentation could be found [in this document](docs/README.md).
+
+# Example runs
+
+## Windows 
+
+```shell
+.\CAFF_Processor.exe "Z:\\BME\\MSc\\SzamBiz\\ShoppingLikeFlies.DomainServices\\test\\DomainServices.UnitTest\\bin\\Debug\\net6.0\\validfile.caff" --validate 
+.\CAFF_Processor.exe "Z:\\BME\\MSc\\SzamBiz\\ShoppingLikeFlies.DomainServices\\test\\DomainServices.UnitTest\\bin\\Debug\\net6.0\\validfile.caff" --getThumbnail "Z:\\BME\\MSc\\SzamBiz\\ShoppingLikeFlies.DomainServices\\test\\DomainServices.UnitTest\\bin\\Debug\\net6.0\\generator"
+```
+
+## Linux
+
+```bash
+./CAFF_Processor ../afl/testfiles/1.caff --validate
+./CAFF_Processor ../afl/testfiles/1.caff --getThumbnail ./generator
+```

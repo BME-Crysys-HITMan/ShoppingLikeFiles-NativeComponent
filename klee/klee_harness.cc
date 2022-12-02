@@ -1,4 +1,9 @@
 
+//
+// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 11. 16.
+//
+
+
 // MIT License
 //
 // Copyright (c) 2022.  - BME-Crysys-HITMan
@@ -21,33 +26,28 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#include <CAFF_validation.h>
+#include <CAFF_Processor.h>
 
-//
-// Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
-//
+const int SIZE = 20;
 
-#include "DLLPublicInterface.h"
+int main(int argc, char **argv) {
 
-CAFF::CAFFProcessor *CreateCaffProcessor(std::string fileName) {
-    return new CAFF::CAFFProcessor(fileName.c_str());
-}
+    if (argc < 2) {
+        return 1;
+    }
+    /*uint8_t data[SIZE];
+    memcpy(data, argv[1], SIZE * sizeof(uint8_t));*/
 
-void DeleteCaffProcessor(CAFF::CAFFProcessor *proc) {
-    delete proc;
-}
+    CAFF::CAFFProcessor proc(argv[1]);
 
-bool ValidateFile(CAFF::CAFFProcessor *proc) {
-    return proc->ValidateFile();
-}
+    uint64_t numAnim;
 
-CIFF::Pixel *GenerateThumbnail(CAFF::CAFFProcessor *proc) {
-    return proc->GenerateThumbnailImage();
-}
+    bool res = proc.ValidateFile();
 
-CAFF::Credit GetCredit(CAFF::CAFFProcessor *proc) {
-    return proc->GetCredits();
-}
-
-void GetTags(CAFF::CAFFProcessor *proc) {
-
+    if (res) {
+        std::cout << "File is valid!" << std::endl;
+        return 0;
+    }
+    return 1;
 }

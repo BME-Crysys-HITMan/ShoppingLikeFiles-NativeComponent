@@ -26,7 +26,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <cstring>
 #include <CAFF_Processor.h>
 #include <iostream>
 #include <fstream>
@@ -128,10 +127,11 @@ namespace CAFF {
 
             fileStream.read(data.get(), length);
 
-            auto block = std::make_shared<BasicBlock>(data.get(), length);
+            auto block = std::make_shared<BasicBlock>();
 
-            //BasicBlock block(data.get());
             block->blockType = Utils::getBlockType(id);
+            block->contentSize = NativeComponent::Types::INT64((uint64_t) length);
+            block->setData(data.get());
 
             /**
              * Bugfix for RUN 3
@@ -180,9 +180,9 @@ namespace CAFF {
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {
         CIFF::Pixel *pixels = nullptr;
 
-        if (!this->isValidFile) {
+        /*if (!this->isValidFile) {
             return pixels;
-        }
+        }*/
 
         std::ifstream ifs(this->fileName, std::ifstream::binary);
 
@@ -194,10 +194,11 @@ namespace CAFF {
             ifs.read((char *) &length, 8);
             auto data = std::make_unique<char[]>(length);
             ifs.read(data.get(), length);
-            auto block = std::make_shared<BasicBlock>(data.get(), length);
+            auto block = std::make_shared<BasicBlock>();
 
             block->blockType = Utils::getBlockType(id);
-
+            block->contentSize = NativeComponent::Types::INT64(length);
+            block->setData(data.get());
             if (block->blockType == Utils::Animation) {
                 CIFF::CIFFProcessor proc;
                 unsigned long long durationSize = 8;
@@ -205,12 +206,12 @@ namespace CAFF {
                 unsigned long long contentLength = ciffSize.getValue() - durationSize;
                 auto *ciff = new uint8_t[sizeof(uint8_t) * contentLength];
                 GetData(block->data.get(), durationSize, contentLength, ciff);
-                std::unique_ptr<CIFF::Header> header(proc.ProcessHeader((uint8_t *) ciff));
+                std::unique_ptr<CIFF::Header> header(CIFF::CIFFProcessor::ProcessHeader(ciff));
 
                 this->metadata.height = header->height;
                 this->metadata.width = header->width;
 
-                pixels = proc.GetImage((uint8_t *) ciff, header.get());
+                pixels = CIFF::CIFFProcessor::GetImage(ciff, header.get());
 
                 delete[] ciff;
 
@@ -238,6 +239,12 @@ namespace CAFF {
 
         creator[creator_len] = '\0';
 
+        GetData(data, YEAR_OFFSET,      2, &this->metadata.year);
+        GetData(data, MONTH_OFFSET,     1, &this->metadata.month);
+        GetData(data, DAY_OFFSET,       1, &this->metadata.day);
+        GetData(data, HOUR_OFFSET,      1, &this->metadata.hour);
+        GetData(data, MINUTE_OFFSET,    1, &this->metadata.minute);
+
         this->metadata.creator = creator;
     }
 
@@ -247,6 +254,10 @@ namespace CAFF {
         this->tags.insert(header->tags.begin(), header->tags.end());
 
         delete header;
+    }
+
+    std::set<std::string> CAFFProcessor::GetTags() {
+        return this->tags;
     }
 
 

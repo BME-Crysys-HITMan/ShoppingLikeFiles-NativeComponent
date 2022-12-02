@@ -44,3 +44,8 @@ BasicBlock::BasicBlock(const char *data, uint64_t size) {
     this->contentSize = NativeComponent::Types::INT64(size);
     this->setData(data);
 }
+
+BasicBlock::BasicBlock(std::unique_ptr<unsigned char[]> ptr, uint64_t size) {
+    this->data = std::move(ptr);
+    this->contentSize = size;
+}

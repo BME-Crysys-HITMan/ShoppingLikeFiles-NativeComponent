@@ -26,7 +26,6 @@
 // Created by Daniel Abraham <daniel.abraham@edu.bme.hu> on 2022. 10. 20.
 //
 #include "Utils.h"
-#include <bit>
 #include <string>
 #include <vector>
 #include <cstring>
