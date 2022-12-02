@@ -27,6 +27,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 
 int main(int argv, char **argc) {
     if (argv < 3) {
