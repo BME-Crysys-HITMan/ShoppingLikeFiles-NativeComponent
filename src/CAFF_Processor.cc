@@ -26,7 +26,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <cstring>
 #include <CAFF_Processor.h>
 #include <iostream>
 #include <fstream>
@@ -240,6 +239,12 @@ namespace CAFF {
 
         creator[creator_len] = '\0';
 
+        GetData(data, YEAR_OFFSET,      2, &this->metadata.year);
+        GetData(data, MONTH_OFFSET,     1, &this->metadata.month);
+        GetData(data, DAY_OFFSET,       1, &this->metadata.day);
+        GetData(data, HOUR_OFFSET,      1, &this->metadata.hour);
+        GetData(data, MINUTE_OFFSET,    1, &this->metadata.minute);
+
         this->metadata.creator = creator;
     }
 
@@ -249,6 +254,10 @@ namespace CAFF {
         this->tags.insert(header->tags.begin(), header->tags.end());
 
         delete header;
+    }
+
+    std::set<std::string> CAFFProcessor::GetTags() {
+        return this->tags;
     }
 
 

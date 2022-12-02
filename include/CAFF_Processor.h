@@ -39,6 +39,11 @@ namespace CAFF {
     struct Credit {
         uint64_t width;
         uint64_t height;
+        uint16_t year;
+        uint8_t month;
+        uint8_t day;
+        uint8_t hour;
+        uint8_t minute;
         //Creator
         const char *creator;
     };
@@ -64,6 +69,8 @@ namespace CAFF {
         CIFF::Pixel *GenerateThumbnailImage();
 
         Credit GetCredits();
+
+        std::set<std::string> GetTags();
     };
 }
 

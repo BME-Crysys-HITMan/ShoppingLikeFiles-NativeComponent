@@ -26,7 +26,6 @@
 #include "CAFF_Processor.h"
 #include <string>
 #include <iostream>
-#include <memory>
 #include <fstream>
 
 int main(int argv, char **argc) {
@@ -39,11 +38,13 @@ int main(int argv, char **argc) {
                 std::cout << "Commands:" << std::endl;
                 std::cout << "--validate\tValidates a file. Prints 1 if file is valid." << std::endl;
                 std::cout
-                        << "--getThumbnail\tGenerated a thumbnail image and puts it to standard output. The sequence start with WidthHeightPixelData"
+                        << "--getThumbnail\tGenerated a thumbnail image and puts the filename to standard output. The sequence start with WidthHeightPixelData"
                         << std::endl;
+                std::cout.flush();
                 return 0;
             }
         }
+        std::cout.flush();
         return 0;
     }
 
@@ -55,20 +56,40 @@ int main(int argv, char **argc) {
     if (command == "--validate") {
         auto isValid = proc.ValidateFile();
         std::cout << isValid << std::endl;
+
+        if(!isValid){
+            return 0;
+        }
+
+        auto credits = proc.GetCredits();
+
+        std::cout << credits.year << ":" << (int) credits.month << ":"
+                  << (int) credits.day << ":" << (int) credits.hour << ":"
+                  << (int) credits.minute << std::endl;
+
+        std::cout << credits.creator << std::endl;
+        auto tags = proc.GetTags();
+
+        std::for_each(tags.begin(), tags.end(), [&](const auto &item) {
+            std::cout << item << ";";
+        });
+        std::cout << std::endl;
     } else if (command == "--getThumbnail") {
         if (argv < 4) {
             std::cout << "Usage: CAFF_Processor /path/to/file --getThumbnail /path/to/return/folder" << std::endl;
+            std::cout.flush();
             return 0;
         }
         std::string folder(argc[3]);
-        CIFF::Pixel *c = proc.GenerateThumbnailImage();
+        CIFF::Pixel const *pPixel = proc.GenerateThumbnailImage();
 
         auto credit = proc.GetCredits();
         uint64_t size = credit.width * credit.height;
 
-        std::cout << credit.width << credit.height;
-
         auto index = fileName.find_last_of('/');
+        if (fileName.length() < index) {
+            index = fileName.find_last_of('\\');
+        }
         auto f = fileName.substr(index);
 
         folder.append(f);
@@ -77,19 +98,23 @@ int main(int argv, char **argc) {
 
         try {
             ofs.open(folder, std::ios::binary);
-            if (ofs.fail()) throw ("Can't open output file");
-            ofs << credit.width << credit.height;
+            if (ofs.fail()) throw "Can't open output file";
+
+            ofs.write((char *) &credit.width, sizeof(uint64_t));
+            ofs.write((char *) &credit.height, sizeof(uint64_t));
 
             for (std::size_t i = 0; i < size; ++i) {
-                auto pixel = *c++;
-                ofs << pixel.red << pixel.green << pixel.blue;
+                auto pixel = *pPixel++;
+                ofs.write((char *) &pixel, sizeof(CIFF::Pixel));
             }
+
+            ofs.flush();
+            ofs.close();
+            std::cout << folder << std::endl;
         } catch (const char *err) {
             std::cerr << err;
         }
-
-        //delete[] c;
     }
-
+    std::cout.flush();
     return 0;
 }

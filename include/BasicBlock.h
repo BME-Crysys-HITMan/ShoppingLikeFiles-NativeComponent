@@ -43,7 +43,7 @@ struct BasicBlock {
 
     BasicBlock(const char *data, uint64_t size);
 
-    BasicBlock() : data(std::nullptr_t()), contentSize((uint64_t) 0), blockType(CAFF::Utils::Unknown) {};
+    BasicBlock() : blockType(CAFF::Utils::Unknown), contentSize(), data(std::nullptr_t()) {};
 };
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_BASICBLOCK_H
