@@ -4,24 +4,6 @@
 
 #include "CIFF_Utils.h"
 
-std::string getCaption(uint8_t *data, std::size_t start, std::size_t header_size) {
-    std::vector<char> vec;
-    uint8_t *p = data + start;
-    size_t counter = 0;
-    while (counter < header_size) {
-        ++counter;
-        auto c = (char) *p++;
-        vec.push_back(c);
-        if(c == '\n')
-            break;
-    }
-    vec.push_back('\0');
-    vec.shrink_to_fit();
-    std::string s(vec.data());
-    return s;
-}
-
-
 size_t getTagsLength(size_t headerSize, std::size_t captionLength) {
     size_t magicLength = 4;
     size_t headerConstantLength = 32;

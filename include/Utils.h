@@ -89,4 +89,16 @@ void GetData(const unsigned char *data, unsigned long long start, unsigned long 
     mempcpy((char *) result, &data[start], length);
 }
 
+/**
+ * Finds the size of the caption field based on the following requirement:
+ *
+ * 1) Variable length ASCII encoded string ending with '\\n'.
+ * 2) As '\\n' is a special character for the file format, the caption cannot contain this character.
+ *
+ * @param caption
+ * @return
+ */
+std::string getCaption(const uint8_t *data, std::size_t start, std::size_t header_size);
+
+
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H

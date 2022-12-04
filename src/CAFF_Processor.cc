@@ -143,7 +143,7 @@ namespace CAFF {
 
 
             bool valid = false;
-
+            this->metadata.caption = nullptr;
             switch (block->blockType) {
                 case Utils::Header:
                     valid = ValidateHeader(block->data.get(), length, &num_anim);
@@ -157,6 +157,9 @@ namespace CAFF {
                         break;
                     }
                     valid = ValidateAnimation(block->data.get(), length);
+                    if(valid && this->metadata.caption == nullptr){
+                        GetCaptionFromAnimation(block->data.get());
+                    }
                     --num_anim;
                     break;
                 case Utils::Unknown:
@@ -175,6 +178,16 @@ namespace CAFF {
             }
         }
         return true;
+    }
+
+    void CAFFProcessor::GetCaptionFromAnimation(const uint8_t *data){
+        size_t header_size;
+        GetData(data, 12, 8, &header_size);
+        size_t content_size;
+        GetData(data, 20, 8, &content_size);
+        auto maxCaptionSize = content_size > header_size ? content_size - header_size : header_size - content_size;
+        auto caption=getCaption(data, 44, maxCaptionSize);
+        this->metadata.caption= caption.c_str();
     }
 
     CIFF::Pixel *CAFFProcessor::GenerateThumbnailImage() {

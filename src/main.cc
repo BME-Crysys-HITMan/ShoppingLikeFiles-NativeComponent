@@ -69,6 +69,7 @@ int main(int argv, char **argc) {
                   << (int) credits.minute << std::endl;
 
         std::cout << credits.creator << std::endl;
+        std::cout << credits.caption << std::endl;
         auto tags = proc.GetTags();
 
         std::for_each(tags.begin(), tags.end(), [&](const auto &item) {

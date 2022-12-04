@@ -96,3 +96,20 @@ NativeComponent::Types::INT64::INT64(char arr[]) : TypeBase() {
 
     this->Set(value);
 }
+
+std::string getCaption(const uint8_t *data, std::size_t start, std::size_t header_size) {
+    std::vector<char> vec;
+    uint8_t *p = const_cast<uint8_t *>(data + start);
+    size_t counter = 0;
+    while (counter < header_size) {
+        ++counter;
+        auto c = (char) *p++;
+        vec.push_back(c);
+        if(c == '\n')
+            break;
+    }
+    vec.push_back('\0');
+    vec.shrink_to_fit();
+    std::string s(vec.data());
+    return s;
+}
