@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <sstream>
 #include <cstring>
+#include "Utils.h"
 
 #define DURATION_LENGTH 8
 
@@ -20,17 +21,6 @@
 #define WIDTH_OFFSET 20
 #define HEIGHT_OFFSET 28
 #define CAPTION_OFFSET 36
-
-/**
- * Finds the size of the caption field based on the following requirement:
- *
- * 1) Variable length ASCII encoded string ending with '\\n'.
- * 2) As '\\n' is a special character for the file format, the caption cannot contain this character.
- *
- * @param caption
- * @return
- */
-std::string getCaption(uint8_t *data, std::size_t start, std::size_t header_size);
 
 /**
  *

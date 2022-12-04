@@ -46,6 +46,7 @@ namespace CAFF {
         uint8_t minute;
         //Creator
         const char *creator;
+        const char *caption;
     };
 
     class CAFFProcessor {
@@ -59,6 +60,7 @@ namespace CAFF {
 
         void ProcessTags(uint8_t *data);
 
+        void GetCaptionFromAnimation(const uint8_t *data);
     public:
         explicit CAFFProcessor(const char *filename);
 
