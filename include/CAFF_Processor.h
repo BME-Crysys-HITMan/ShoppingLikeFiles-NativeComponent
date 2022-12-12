@@ -45,7 +45,7 @@ namespace CAFF {
         uint8_t hour;
         uint8_t minute;
         //Creator
-        const char *creator;
+        std::string creator;
     };
 
     class CAFFProcessor {
@@ -53,24 +53,22 @@ namespace CAFF {
         const char *fileName;
         bool isValidFile = false;
         Credit metadata;
-        std::set<std::string> tags;
+        std::set<std::string, std::less<>> tags;
 
-        void ProcessCredit(uint8_t *data);
+        void ProcessCredit(const uint8_t *data);
 
-        void ProcessTags(uint8_t *data);
+        void ProcessTags(const uint8_t *data);
 
     public:
-        explicit CAFFProcessor(const char *filename);
-
-        ~CAFFProcessor();
+        explicit CAFFProcessor(const char *filename) : fileName(filename) {};
 
         bool ValidateFile();
 
         CIFF::Pixel *GenerateThumbnailImage();
 
-        Credit GetCredits();
+        [[nodiscard]] Credit GetCredits() const;
 
-        std::set<std::string> GetTags();
+        [[nodiscard]] std::set<std::string, std::less<>> GetTags() const;
     };
 }
 

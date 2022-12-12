@@ -68,31 +68,49 @@ bool ValidateCredits(const uint8_t *data, std::size_t length) {
     int yearSize = 2;
     int16_t year;
     GetData(data, start, yearSize, &year);
+    if (year <= 0 || year > 2022) {
+        return false;
+    }
     start += yearSize;
 
     int monthSize = 1;
     int8_t month;
     GetData(data, start, monthSize, &month);
+    if (month <= 0 || month > 12) {
+        return false;
+    }
     start += monthSize;
 
     int daySize = 1;
     int8_t day;
     GetData(data, start, daySize, &day);
+    if (day <= 0 || day > 31) {
+        return false;
+    }
     start += daySize;
 
     int hourSize = 1;
     int8_t hour;
     GetData(data, start, hourSize, &hour);
+    if (hour < 0 || hour > 24) {
+        return false;
+    }
     start += hourSize;
 
     int minuteSize = 1;
     int8_t minute;
     GetData(data, start, minuteSize, &minute);
+    if (minute < 0 || minute > 60) {
+        return false;
+    }
     start += minuteSize;
 
     int creator_lenSize = 8;
     int64_t creator_len;
     GetData(data, start, creator_lenSize, &creator_len);
+    if (creator_len <= 0) {
+        return false;
+    }
     start += creator_lenSize;
 
     if (length != start + creator_len)

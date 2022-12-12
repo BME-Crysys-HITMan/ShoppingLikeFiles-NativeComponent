@@ -26,13 +26,15 @@
 #include "CIFF_validation.h"
 #include "CIFF_Utils.h"
 
-CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
+CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(const uint8_t *data) {
     auto header = new Header();
     GetData(data, HEADER_SIZE_OFFSET, 8, &header->headerSize);
     GetData(data, CONTENT_SIZE_OFFSET, 8, &header->contentSize);
     GetData(data, WIDTH_OFFSET, 8, &header->width);
     GetData(data, HEIGHT_OFFSET, 8, &header->height);
-    auto maxCaptionSize= header->contentSize > header->headerSize ? header->contentSize-header->headerSize : header->headerSize-header->contentSize;
+    auto maxCaptionSize =
+            header->contentSize > header->headerSize ? header->contentSize - header->headerSize : header->headerSize -
+                                                                                                  header->contentSize;
     header->caption = getCaption(data, CAPTION_OFFSET, maxCaptionSize);
     /*
      * remove \n from the end;
@@ -46,7 +48,7 @@ CIFF::Header *CIFF::CIFFProcessor::ProcessHeader(uint8_t *data) {
     return header;
 }
 
-CIFF::Pixel *CIFF::CIFFProcessor::GetImage(uint8_t *data, CIFF::Header *header) {
+CIFF::Pixel *CIFF::CIFFProcessor::GetImage(const uint8_t *data, CIFF::Header *header) {
     auto *result = new CIFF::Pixel[sizeof(CIFF::Pixel) * (header->contentSize / 3)];
     int offset = header->headerSize;
     for (int i = 0; i < header->contentSize; i += 3) {
@@ -61,7 +63,7 @@ CIFF::Pixel *CIFF::CIFFProcessor::GetImage(uint8_t *data, CIFF::Header *header) 
 }
 
 
-bool CIFF::CIFFProcessor::IsValid(uint8_t *data, NativeComponent::Types::INT64 ciffSize) {
+bool CIFF::CIFFProcessor::IsValid(const uint8_t *data, NativeComponent::Types::INT64 ciffSize) {
     if (ciffSize.getValue() < 36) {
         return false;
     }

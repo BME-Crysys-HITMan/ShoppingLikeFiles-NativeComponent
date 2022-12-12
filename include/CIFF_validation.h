@@ -39,7 +39,7 @@
  * @param data Raw dataframe
  * @return Returns true if content is valid, otherwise returns false.
  */
-bool validateHeader(uint8_t *data);
+bool validateHeader(const uint8_t *data);
 
 /**
  *
@@ -47,6 +47,6 @@ bool validateHeader(uint8_t *data);
  * @param content_size
  * @return
  */
-bool validateContent(uint8_t *data, std::size_t content_size);
+bool validateContent(const uint8_t *data, std::size_t content_size);
 
 #endif //SHOPPINGLIKEFLIES_AFL_CIFF_VALIDATION_H

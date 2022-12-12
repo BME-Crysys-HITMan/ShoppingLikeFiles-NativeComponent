@@ -21,11 +21,32 @@ CC=wllvm CXX=wllvm++ cmake -DCMAKE_CXX_FLAGS="$CXX_FLAGS" ..
 
 make
 
-extract-bc klee_harness
+extract-bc SFL_Klee
 ```
 
 ## run klee
 
+### First run
 ```shell
-klee --libcxx --libc=uclibc --posix-runtime kleeCredit.bc -sym-arg 20
+klee --only-output-states-covering-new --libcxx --libc=uclibc --posix-runtime --optimize \
+ --max-solver-time=5min --search=random-state --search=nurs:md2u --max-time=10min \
+ SFL_Klee.bc A -sym-files 1 120
+```
+
+#### Results
+
+The run resulted in a ~51% overall code coverage including std libs.
+
+### Long run
+```shell
+klee --only-output-states-covering-new --libcxx --libc=uclibc --posix-runtime --optimize \
+--max-solver-time=5min --search=random-state --search=nurs:md2u --max-time=10min \
+SFL_Klee.bc A -sym-files 1 120
+```
+
+### DFS search
+```shell
+klee --only-output-states-covering-new --libcxx --libc=uclibc --posix-runtime --optimize \
+--max-solver-time=5min --search=dfs   --max-time=10min \
+SFL_Klee.bc A -sym-files 1 120
 ```

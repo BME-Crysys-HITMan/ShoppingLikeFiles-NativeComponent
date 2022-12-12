@@ -1,0 +1,1 @@
+sonar-scanner.bat -D"sonar.projectKey=slf-klee-run" -D"sonar.sources=.\\src" -D"sonar.cfamily.gcov.reportsPath=.\\coverage" -D"sonar.host.url=http://localhost:9000" -D"sonar.login=sqp_3d1b819c7e4b84eff6a1c81884c35331e0d9800d"

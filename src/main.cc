@@ -58,7 +58,7 @@ int main(int argv, char **argc) {
         auto isValid = proc.ValidateFile();
         std::cout << isValid << std::endl;
 
-        if(!isValid){
+        if (!isValid) {
             return 0;
         }
 
@@ -81,41 +81,46 @@ int main(int argv, char **argc) {
             std::cout.flush();
             return 0;
         }
-        std::string folder(argc[3]);
-        CIFF::Pixel const *pPixel = proc.GenerateThumbnailImage();
+        auto valid = proc.ValidateFile();
 
-        auto credit = proc.GetCredits();
-        uint64_t size = credit.width * credit.height;
+        if (valid) {
+            std::string folder(argc[3]);
+            CIFF::Pixel const *pPixel = proc.GenerateThumbnailImage();
 
-        auto index = fileName.find_last_of('/');
-        if (fileName.length() < index) {
-            index = fileName.find_last_of('\\');
-        }
-        auto f = fileName.substr(index);
+            auto credit = proc.GetCredits();
+            uint64_t size = credit.width * credit.height;
 
-        folder.append(f);
-        folder.append(".pixels");
-        std::ofstream ofs;
-
-        try {
-            ofs.open(folder, std::ios::binary);
-            if (ofs.fail()) throw "Can't open output file";
-
-            ofs.write((char *) &credit.width, sizeof(uint64_t));
-            ofs.write((char *) &credit.height, sizeof(uint64_t));
-
-            for (std::size_t i = 0; i < size; ++i) {
-                auto pixel = *pPixel++;
-                ofs.write((char *) &pixel, sizeof(CIFF::Pixel));
+            auto index = fileName.find_last_of('/');
+            if (fileName.length() < index) {
+                index = fileName.find_last_of('\\');
             }
+            auto f = fileName.substr(index);
 
-            ofs.flush();
-            ofs.close();
-            std::cout << folder << std::endl;
-        } catch (const char *err) {
-            std::cerr << err;
+            folder.append(f);
+            folder.append(".pixels");
+            std::ofstream ofs;
+
+            try {
+                ofs.open(folder, std::ofstream::binary | std::ofstream::out | std::ofstream::trunc);
+                if (ofs.fail()) throw "Can't open output file";
+                ofs.clear();
+                ofs.write((char *) &credit.width, sizeof(uint64_t));
+                ofs.write((char *) &credit.height, sizeof(uint64_t));
+
+                for (std::size_t i = 0; i < size; ++i) {
+                    auto pixel = *pPixel++;
+                    ofs.write((char *) &pixel, sizeof(CIFF::Pixel));
+                }
+
+                ofs.flush();
+                ofs.close();
+                std::cout << folder << std::endl;
+            } catch (const char *err) {
+                std::cerr << err;
+            }
         }
+        std::cout.flush();
+        return 0;
     }
-    std::cout.flush();
-    return 0;
+    return 1;
 }

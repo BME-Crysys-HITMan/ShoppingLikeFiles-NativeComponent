@@ -6,6 +6,7 @@
 #define SHOPPINGLIKEFILES_NATIVECOMPONENT_CIFF_UTILS_H
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_CIFF_UTILS_H
+
 #include <string>
 #include <vector>
 #include <algorithm>
@@ -30,7 +31,7 @@
  * @param caption
  * @return
  */
-std::string getCaption(uint8_t *data, std::size_t start, std::size_t header_size);
+std::string getCaption(const uint8_t *data, std::size_t start, std::size_t header_size);
 
 /**
  *
@@ -48,4 +49,4 @@ std::string getCaption(uint8_t *data, std::size_t start, std::size_t header_size
  */
 size_t getTagsLength(size_t headerSize, std::size_t captionLength);
 
-std::vector<std::string> getTags(uint8_t *data, uint64_t start, uint64_t len);
+std::vector<std::string> getTags(const uint8_t *data, uint64_t start, uint64_t len);

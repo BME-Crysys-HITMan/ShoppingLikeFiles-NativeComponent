@@ -86,7 +86,7 @@ namespace NativeComponent::Types {
 
 template<typename T>
 void GetData(const unsigned char *data, unsigned long long start, unsigned long long length, T *result) {
-    mempcpy((char *) result, &data[start], length);
+    mempcpy((void *) result, &data[start], length);
 }
 
 #endif //SHOPPINGLIKEFILES_NATIVECOMPONENT_UTILS_H

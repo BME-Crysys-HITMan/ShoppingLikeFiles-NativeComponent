@@ -40,7 +40,7 @@
  * @param magic 4 bytes of char
  * @return Returns true if magic is 'CIFF', otherwise return false
  */
-bool validateMagicString(uint8_t *&magic) {
+bool validateMagicString(const uint8_t *&magic) {
     char mc[5];
     for (int i = 0; i < 4; ++i) {
         mc[i] = (char) *magic++;
@@ -78,7 +78,7 @@ bool validateContentSize(uint64_t contentSize, uint64_t width, uint64_t height) 
  * @param length length of the tags field
  * @return Returns true if requirements met for a well-formed tags field.
  */
-bool validateTags(char *tags, std::size_t length) {
+bool validateTags(const char *tags, std::size_t length) {
     std::string s(tags, length);
     if (std::count(s.begin(), s.end(), '\n') > 0)
         return false;
@@ -94,26 +94,26 @@ bool validateTags(char *tags, std::size_t length) {
  * @param tagsLength
  * @return true, if header size is acceptable.
  */
-bool validateHeaderSize(std::size_t headerSize, std::size_t captionLength, std::size_t tagsLength) {
+bool validateHeaderSize(const std::size_t headerSize, std::size_t captionLength, std::size_t tagsLength) {
     size_t magicLength = 4;
     size_t headerConstantLength = 32;
     return headerSize == (magicLength + headerConstantLength + captionLength + tagsLength);
 }
 
-size_t getLong(uint8_t *data, size_t start, size_t len) {
+size_t getLong(const uint8_t *data, size_t start, size_t len) {
     std::size_t dat;
     GetData(data, start, len, &dat);
 
     return dat;
 }
 
-bool validateContent(uint8_t *data, std::size_t content_size) {
+bool validateContent(const uint8_t *data, std::size_t content_size) {
     auto headerSize = getLong(data, 4, 8);
     auto cSize = getLong(data, 12, 8);
     return content_size == headerSize + cSize;
 }
 
-bool validateHeader(uint8_t *data) {
+bool validateHeader(const uint8_t *data) {
     if (!validateMagicString(data))
         return false;
 
@@ -144,7 +144,7 @@ bool validateHeader(uint8_t *data) {
 
     std::size_t tagsStart = 32 + captionLength;
 
-    uint8_t *start = data + tagsStart;
+    auto start = data + tagsStart;
     char tags[tagsLength];
     for (int i = 0; i < tagsLength; ++i) {
         tags[i] = static_cast<char>(*start++);
